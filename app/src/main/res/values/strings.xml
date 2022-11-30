@@ -7,5 +7,7 @@
     <string name="email">Write your email</string>
     <string name="password">Password</string>
     <string name="retype_password">Re-type password</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
