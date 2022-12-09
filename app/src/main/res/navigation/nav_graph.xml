@@ -29,6 +29,9 @@
         android:name="com.example.blackphototatoo.BlankFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" />
+    <action
+        android:id="@+id/action_blankFragment_to_bottom1Fragment"
+        app:destination="@id/bottom1Fragment" />
     <fragment
         android:id="@+id/createAccountFragment"
         android:name="com.example.blackphototatoo.CreateAccountFragment"
@@ -37,6 +40,21 @@
     <action
         android:id="@+id/action_createAccountFragment_to_loginFragment"
         app:destination="@id/loginFragment" />
+    <fragment
+        android:id="@+id/bottom1Fragment"
+        android:name="com.example.blackphototatoo.Bottom1Fragment"
+        android:label="Perfil"
+        tools:layout="@layout/fragment_bottom1" />
+    <fragment
+        android:id="@+id/bottom2Fragment"
+        android:name="com.example.blackphototatoo.Bottom2Fragment"
+        android:label="Imagenes"
+        tools:layout="@layout/fragment_bottom1" />
+    <fragment
+        android:id="@+id/bottom3Fragment"
+        android:name="com.example.blackphototatoo.Bottom3Fragment"
+        android:label="Busqueda"
+        tools:layout="@layout/fragment_bottom3" />
 
 
 </navigation>
