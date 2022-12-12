@@ -9,10 +9,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.blackphototatoo.databinding.ActivityMainBinding;
+import com.example.blackphototatoo.databinding.FragmentBottom3Binding;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     binding.bottomNavView.setVisibility(View.GONE);
                 }
+            }
+        });
+        binding.bottomNavView.findViewById(R.id.bottom3Fragment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, MapActivity.class));
             }
         });
     }

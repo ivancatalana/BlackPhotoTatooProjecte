@@ -55,6 +55,29 @@
         android:name="com.example.blackphototatoo.Bottom3Fragment"
         android:label="Busqueda"
         tools:layout="@layout/fragment_bottom3" />
+    <fragment
+        android:id="@+id/recyclerElementosFragment"
+        android:name="com.example.blackphototatoo.RecyclerElementosFragment"
+        android:label="fragment_recycler_elementos"
+        tools:layout="@layout/fragment_recycler_elementos" />
 
+
+    <action
+        android:id="@+id/action_mostrarElementoFragment"
+        app:destination="@id/mostrarElementoFragment" />
+    <action
+        android:id="@+id/action_nuevoElementoFragment"
+        app:destination="@id/nuevoElementoFragment" />
+
+    <fragment
+        android:id="@+id/nuevoElementoFragment"
+        android:name="com.example.blackphototatoo.NuevoElementoFragment"
+        android:label="fragment_nuevo_elementok"
+        tools:layout="@layout/fragment_nuevo_elemento" />
+    <fragment
+        android:id="@+id/mostrarElementoFragment"
+        android:name="com.example.blackphototatoo.MostrarElementoFragment"
+        android:label="fragment_mostrar_elemento"
+        tools:layout="@layout/fragment_mostrar_elemento" />
 
 </navigation>
