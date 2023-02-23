@@ -1,52 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/enunciado"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/rocksalt"
-        android:gravity="center"
-        android:text="Login/Ingreso"
-        android:textSize="34sp" />
+        android:layout_height="match_parent">
 
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="236dp"
-        android:src="@drawable/logo" />
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="113dp"
+            android:layout_height="133dp"
+            android:layout_marginLeft="-35dp"
+            android:layout_marginTop="-50dp"
+            android:background="#00000000"
+            android:text="↶"
+            android:textColor="#050505"
+            android:textSize="50sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="email" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_marginLeft="50dp"
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password" />
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="50dp"
+            android:src="@drawable/logotext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/ingresar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#FFC107"
-        android:fontFamily="@font/rocksalt"
-        android:text="Login/Ingreso"
-        android:textColor="@color/black" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/enunciado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="-25dp"
+            android:fontFamily="@font/rocksalt"
+            android:gravity="center|left"
+            android:text="Login"
+            android:textColor="@color/black"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.375"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/borde"
+            android:fontFamily="@font/rocksalt"
+            android:textColor="@color/black"
+            android:hint="email"
+            app:layout_constraintTop_toBottomOf="@id/enunciado" />
+
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/borde"
+            android:fontFamily="@font/rocksalt"
+            android:textColor="@color/black"
+            android:hint="Password"
+            app:layout_constraintTop_toBottomOf="@id/email" />
+
+        <Button
+            android:id="@+id/ingresar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:backgroundTint="@color/black"
+            android:fontFamily="@font/rocksalt"
+            android:text="Next"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/password" />
+
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/rocksalt"
+            android:shadowColor="@color/white"
+            android:text="Forgot Password?"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            android:elevation="0dp"
+            android:background="#00000000"
+            app:layout_constraintTop_toBottomOf="@id/ingresar" />
+
+        <Button
+            android:id="@+id/crearCuenta"
+            android:layout_width="355dp"
+            android:layout_height="0dp"
+            android:background="#00000000"
+            android:backgroundTint="@color/white"
+            android:elevation="0dp"
+            android:fontFamily="@font/rocksalt"
+            android:gravity="center"
+            android:text="@string/create_account"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button2" />
+
+
 
         <ProgressBar
             android:id="@+id/conectando"
@@ -54,36 +128,19 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:visibility="gone" />
-    </FrameLayout>
 
-    <TextView
-        android:id="@+id/ingreso"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:textSize="48sp" />
-
-    <Button
-        android:id="@+id/crearCuenta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="90dp"
-        android:backgroundTint="#FFC107"
-        android:fontFamily="cursive"
-        android:gravity="center"
-        android:text="No tienes cuenta?"
-        android:textColor="@color/black" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:fontFamily="@font/rocksalt"
-        android:shadowColor="@color/white"
-        android:text="Forgot Password?"
-        android:textColor="@color/black"
-        android:textSize="10sp" />
+        <TextView
+            android:id="@+id/ingreso"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="396dp"
+            android:gravity="center"
+            android:textSize="48sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView" />
 
 
-</LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

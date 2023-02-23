@@ -37,7 +37,6 @@ public class FullscreenStartFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
@@ -54,10 +53,13 @@ public class FullscreenStartFragment extends Fragment {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
     }
+  /*
     @Override
     public void onStop() {
         super.onStop();
         ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 
+
+   */
 }

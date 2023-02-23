@@ -2,6 +2,7 @@ package com.example.blackphototatoo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.navigation.NavController;
@@ -11,6 +12,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 
 import com.example.blackphototatoo.databinding.ActivityRecyclerBinding;
 
@@ -21,11 +23,14 @@ public class RecyclerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
         setContentView((binding= ActivityRecyclerBinding.inflate(getLayoutInflater())).getRoot());
         NavController navController = ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment)).getNavController();
      //   NavigationUI.setupWithNavController(binding.bottomNavView, navController);
+
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
