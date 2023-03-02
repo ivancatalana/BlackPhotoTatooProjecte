@@ -8,6 +8,7 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -20,11 +21,14 @@ import android.view.WindowManager;
 
 import com.example.blackphototatoo.databinding.ActivityMainBinding;
 import com.example.blackphototatoo.databinding.FragmentBottom3Binding;
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
     private NavController navController;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, MapActivity.class));
             }
         });
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
+
+        MyViewPagerAdapter adapter = new MyViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new MyRecyclerViewFragment(), "Tab 1");
+        adapter.addFragment(new MyRecyclerViewFragment(), "Tab 2");
+        adapter.addFragment(new MyRecyclerViewFragment(), "Tab 3");
+      //  viewPager.setAdapter(adapter);
+       // tabLayout.setupWithViewPager(viewPager);
     }
+
 
 }

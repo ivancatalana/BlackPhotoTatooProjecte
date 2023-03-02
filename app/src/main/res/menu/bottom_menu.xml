@@ -10,9 +10,9 @@
         android:icon="@drawable/person"
         android:title="Profile" />
     <item
-        android:id="@+id/uploadPhotoFragment"
+        android:id="@+id/myRecyclerViewFragment"
         android:icon="@drawable/icon_2"
-        android:title="Profile" />
+        android:title="Imagenes" />
 
     <item
         android:id="@+id/bottom2Fragment"

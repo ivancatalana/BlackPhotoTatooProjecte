@@ -42,14 +42,14 @@
         app:destination="@id/loginFragment" />
     <fragment
         android:id="@+id/bottom1Fragment"
-        android:name="com.example.blackphototatoo.Bottom1Fragment"
+        android:name="com.example.blackphototatoo.ProfileFragment"
         android:label="Perfil"
-        tools:layout="@layout/fragment_bottom1" />
+        tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/bottom2Fragment"
         android:name="com.example.blackphototatoo.Bottom2Fragment"
         android:label="Imagenes"
-        tools:layout="@layout/fragment_bottom1" />
+        tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/bottom3Fragment"
         android:name="com.example.blackphototatoo.Bottom3Fragment"
@@ -94,5 +94,14 @@
         android:name="com.example.blackphototatoo.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/myRecyclerViewFragment"
+        android:name="com.example.blackphototatoo.MyRecyclerViewFragment"
+        android:label="MyRecyclerViewFragment" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.blackphototatoo.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
 
 </navigation>

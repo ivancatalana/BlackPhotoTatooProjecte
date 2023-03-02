@@ -9,26 +9,25 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="72dp"
+        android:layout_width="202dp"
+        android:layout_height="163dp"
+        android:layout_margin="30dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/rocksalt"
         android:text="@string/welcome_page"
-        android:textSize="43sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.441"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="217dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="282dp"
+        android:layout_width="157dp"
+        android:layout_height="156dp"
         android:src="@drawable/logo"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
