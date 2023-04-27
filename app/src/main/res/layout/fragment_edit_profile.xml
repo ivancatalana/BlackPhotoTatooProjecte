@@ -14,60 +14,68 @@
 
         <ImageView
             android:id="@+id/imageView10"
-            android:layout_width="437dp"
-            android:layout_height="760dp"
+            android:layout_width="362dp"
+            android:layout_height="627dp"
             android:src="@drawable/menugradient"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.517" />
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/button20"
+            android:layout_width="296dp"
+            android:layout_height="56dp"
+            android:fontFamily="@font/rocksalt"
+            android:text="change password"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.513"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button9" />
 
         <Button
             android:id="@+id/button8"
             android:layout_width="298dp"
             android:layout_height="56dp"
+            android:layout_marginTop="124dp"
             android:fontFamily="@font/rocksalt"
             android:text="Change Profile Photo"
             android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/button9"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintHorizontal_bias="0.467"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.724" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button9"
             android:layout_width="296dp"
             android:layout_height="56dp"
-            android:layout_marginBottom="206dp"
             android:fontFamily="@font/rocksalt"
-            android:text="change password"
-            app:layout_constraintBottom_toTopOf="@+id/button10"
+            android:text="change Username"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.452"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button8" />
 
         <Button
             android:id="@+id/button10"
-            android:layout_width="286dp"
-            android:layout_height="56dp"
-            android:layout_marginBottom="200dp"
+            android:layout_width="293dp"
+            android:layout_height="53dp"
             android:fontFamily="@font/rocksalt"
             android:text="Delete Account"
             android:textColor="@android:color/holo_red_dark"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button12" />
 
         <Button
             android:id="@+id/button11"
-            android:layout_width="298dp"
-            android:layout_height="56dp"
+            android:layout_width="293dp"
+            android:layout_height="54dp"
             android:fontFamily="@font/rocksalt"
             android:text="Back"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button10" />
@@ -78,10 +86,10 @@
             android:layout_height="56dp"
             android:fontFamily="@font/rocksalt"
             android:text="Block User"
-            app:layout_constraintBottom_toTopOf="@+id/button10"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button9" />
+            app:layout_constraintTop_toBottomOf="@+id/button20" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

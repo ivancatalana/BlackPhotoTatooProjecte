@@ -82,7 +82,7 @@ public class BlankFragment extends Fragment {
                 navController.navigate(R.id.action_blankFragment_to_bottom1Fragment);
 
             }
-        }, 3000);
+        }, 1200);
 
     }
 }

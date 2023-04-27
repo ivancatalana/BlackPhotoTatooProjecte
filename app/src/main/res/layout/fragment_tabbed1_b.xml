@@ -1,17 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="232dp"
+        android:background="@color/transparente"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout2"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="232dp"
+        android:background="@color/transparente"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="448dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+        tools:layout_editor_absoluteX="1dp">
+
+        <LinearLayout
+            android:layout_width="63dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:fontFamily="@font/robotoblack"
+                android:gravity="end"
+                android:text="New"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/imageView26"
+                android:layout_width="51dp"
+                android:layout_height="78dp"
+                android:foregroundGravity="bottom"
+                app:srcCompat="@drawable/users2" />
+
+            <ImageView
+                android:id="@+id/imageView28"
+                android:layout_width="53dp"
+                android:layout_height="65dp"
+                app:srcCompat="@drawable/users2" />
+
+            <ImageView
+                android:id="@+id/imageView27"
+                android:layout_width="51dp"
+                android:layout_height="67dp"
+                app:srcCompat="@drawable/users1" />
+
+            <ImageView
+                android:id="@+id/imageView29"
+                android:layout_width="50dp"
+                android:layout_height="54dp"
+                app:srcCompat="@drawable/users3" />
+
+            <ImageView
+                android:id="@+id/imageView30"
+                android:layout_width="50dp"
+                android:layout_height="58dp"
+                app:srcCompat="@drawable/tatoostore" />
+
+            <TextView
+                android:id="@+id/textView27"
+                android:layout_width="match_parent"
+                android:layout_height="39dp"
+                android:fontFamily="@font/robotoblack"
+                android:gravity="center|end"
+                android:text="This"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <View
+                android:id="@+id/view9"
+                android:layout_width="match_parent"
+                android:layout_height="70dp" />
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:fontFamily="@font/rocksalt"
+                android:text="James Stewart posted a New photo."
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="match_parent"
+                android:layout_height="59dp"
+                android:fontFamily="@font/rocksalt"
+                android:text="James Stewart   Send a New Message."
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:fontFamily="@font/rocksalt"
+                android:text="  Wendy Burguer   Send a New Message."
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:fontFamily="@font/rocksalt"
+                android:text="Pasta Naga liked your photo"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView29"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:fontFamily="@font/rocksalt"
+                android:text="  Tatoo Store    posted a New photo."
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:fontFamily="@font/robotoblack"
+                android:gravity="center|start"
+                android:text=" Week"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

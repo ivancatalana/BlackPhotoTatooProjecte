@@ -20,6 +20,7 @@
         <action
             android:id="@+id/action_loginFragment_to_blankFragment"
             app:destination="@id/blankFragment" />
+
         <action
             android:id="@+id/action_loginFragment_to_createAccountFragment"
             app:destination="@id/createAccountFragment" />
@@ -61,7 +62,9 @@
         android:label="fragment_recycler_elementos"
         tools:layout="@layout/fragment_recycler_elementos" />
 
-
+    <action
+        android:id="@+id/action_mostrarElementosBusqueda"
+        app:destination="@id/searchFragment" />
     <action
         android:id="@+id/action_mostrarElementoFragment"
         app:destination="@id/mostrarElementoFragment" />
@@ -89,6 +92,9 @@
         android:name="com.example.blackphototatoo.UploadPhotoFragment"
         android:label="fragment_upload_photo"
         tools:layout="@layout/fragment_upload_photo" />
+    <action
+        android:id="@+id/action_uploadPhotoFragment_to_bottom2Fragment"
+        app:destination="@id/bottom2Fragment" />
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.blackphototatoo.SearchFragment"
@@ -103,5 +109,32 @@
         android:name="com.example.blackphototatoo.EditProfileFragment"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/emailFragment"
+        android:name="com.example.blackphototatoo.EmailFragment"
+        android:label="fragment_email"
+        tools:layout="@layout/fragment_email" />
+    <action
+        android:id="@+id/action_mostrarEmailFragment"
+        app:destination="@id/emailFragment" />
+    <fragment
+        android:id="@+id/tabbed1CFragment"
+        android:name="com.example.blackphototatoo.Tabbed1CFragment"
+        android:label="Tabbed1CFragment"
+        tools:layout="@layout/fragment_tabbed1_c" />
+    <fragment
+        android:id="@+id/myEmailsRecyclerViewFragment"
+        android:name="com.example.blackphototatoo.MyEmailsRecyclerViewFragment"
+        android:label="MyEmailsRecyclerViewFragment" />
+    <fragment
+        android:id="@+id/tatooStoreFragment"
+        android:name="com.example.blackphototatoo.TatooStoreFragment"
+        android:label="fragment_tatoo_store"
+        tools:layout="@layout/fragment_tatoo_store" />
+    <fragment
+        android:id="@+id/postDiscoverFragment"
+        android:name="com.example.blackphototatoo.PostDiscoverFragment"
+        android:label="fragment_post_discover"
+        tools:layout="@layout/fragment_post_discover" />
 
 </navigation>
