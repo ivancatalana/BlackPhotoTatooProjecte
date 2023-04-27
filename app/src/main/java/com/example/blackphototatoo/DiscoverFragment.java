@@ -2,9 +2,12 @@ package com.example.blackphototatoo;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +49,16 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Evita volver atras
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                //  Handle the back button even
+                // Aqui podemos configurar el comprotamiento del boton back
+                Log.d("BACKBUTTON", "Back button clicks");
+            }
+        };
 
     }
 
@@ -62,6 +76,7 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
         List<MyObject> myObjects = new ArrayList<>();
         myObjects.add(new MyObject(R.drawable.e5, "Objeto 1"));
         myObjects.add(new MyObject(R.drawable.e2, "Objeto 2"));
@@ -69,6 +84,15 @@ public class DiscoverFragment extends Fragment {
         myObjects.add(new MyObject(R.drawable.e4, "Objeto 4"));
         myObjects.add(new MyObject(R.drawable.e1, "Objeto 5"));
         MyAdapter adapter = new MyAdapter(myObjects);
+        adapter.setNavController(navController);
         recyclerView.setAdapter(adapter);
+
+
+        // navegar a otro fragmento
+        view.findViewById(R.id.button15).setOnClickListener(v -> {
+            navController.navigate(R.id.searchFragment);
+        });
+
+
     }
 }

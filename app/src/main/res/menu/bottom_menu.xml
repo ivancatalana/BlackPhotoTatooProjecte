@@ -7,20 +7,21 @@
 
     <item
         android:id="@+id/bottom1Fragment"
-        android:icon="@drawable/person"
+        android:icon="@drawable/persona"
         android:title="Profile" />
     <item
-        android:id="@+id/myRecyclerViewFragment"
-        android:icon="@drawable/icon_2"
-        android:title="Imagenes" />
-
-    <item
-        android:id="@+id/bottom2Fragment"
-        android:icon="@drawable/picture"
-        android:title="Images" />
+        android:id="@+id/uploadPhotoFragment"
+        android:icon="@drawable/camera"
+        android:title="IMAGES" />
 
     <item
         android:id="@+id/bottom3Fragment"
         android:icon="@drawable/visit"
-        android:title="Search" />
+        android:title="Radar" />
+    />
+
+    <item
+        android:id="@+id/tatooStoreFragment"
+        android:icon="@drawable/house"
+        android:title="Studio" />
 </menu>

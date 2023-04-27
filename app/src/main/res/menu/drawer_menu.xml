@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/blackwhite"
+            android:icon="@drawable/picture"
+            android:textColor="@android:color/white"
+            android:title="Black White" />
+
+        <item
+            android:id="@+id/imagesize"
+            android:textColor="@android:color/white"
+            android:icon="@drawable/visit"
+            android:textAppearance="@style/MyDrawerMenuTextStyle"
+
+            android:title="Image Size" />
+
+        <item
+            android:id="@+id/brightness"
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/MyDrawerMenuTextStyle"
+            android:title="Brightness" />
+
+        <item
+            android:id="@+id/contrast"
+            android:title="Contrast" />
+
+        <item android:title="Saturation" />
+
+        <item android:title="Retouch" />
+
+        <item
+            android:id="@+id/resize"
+            android:title="Remove Background" />
+
+    </group>
+
+</menu>

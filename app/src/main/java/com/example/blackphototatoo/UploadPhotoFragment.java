@@ -1,64 +1,121 @@
 package com.example.blackphototatoo;
 
+import static android.app.Activity.RESULT_OK;
+
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UploadPhotoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 public class UploadPhotoFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final int REQUEST_CODE_SELECT_PHOTO = 1;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public UploadPhotoFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UploadPhotoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static UploadPhotoFragment newInstance(String param1, String param2) {
-        UploadPhotoFragment fragment = new UploadPhotoFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private Uri selectedImageUri;
+    NavController navController;
+    View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_upload_photo, container, false);
+      view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
+
+        Button selectPhotoButton = view.findViewById(R.id.select_photo_button);
+        selectPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
+            }
+        });
+
+        Button switchToBottom2Button = view.findViewById(R.id.switch_to_bottom2_button);
+        switchToBottom2Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedImageUri != null) {
+                    /*
+                    Bottom2Fragment bottom2Fragment = new Bottom2Fragment();
+                    Bundle args = new Bundle();
+                    args.putParcelable("selectedImageUri", selectedImageUri);
+                    bottom2Fragment.setArguments(args);
+
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.uploadPhotoFragment, bottom2Fragment);
+                    //fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+
+                     */
+                    navController.navigate(R.id.action_uploadPhotoFragment_to_bottom2Fragment);
+
+                } else {
+                    Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        return view;
     }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+        // Establecer el NavController en la vista
+        Navigation.setViewNavController(view, navController);
+
+        Button selectNextFragment = view.findViewById(R.id.effectfragment);
+        selectNextFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navController.navigate(R.id.action_uploadPhotoFragment_to_bottom2Fragment);
+            }
+        });
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+
+            // Obtener la miniatura de la imagen seleccionada
+            Bitmap thumbnail = null;
+            try {
+                thumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+                        getActivity().getContentResolver(),
+                        Long.parseLong(selectedImageUri.getLastPathSegment()),
+                        MediaStore.Images.Thumbnails.MINI_KIND,
+                        null
+                );
+            } catch (Exception e) {
+                Log.e(TAG, "Error al cargar la miniatura de la imagen", e);
+            }
+
+            // Mostrar la miniatura en la ImageView
+            ImageView selectedPhotoThumbnail = view.findViewById(R.id.selected_photo_thumbnail);
+            selectedPhotoThumbnail.setImageBitmap(thumbnail);
+        }
+    }
+
+
 }
