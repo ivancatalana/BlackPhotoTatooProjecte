@@ -143,7 +143,6 @@ public class Bottom2Fragment extends Fragment {
 
         private void updateBrightness(int brightness) {
             gpuImage.setFilter(new GPUImageBrightnessFilter(brightness / 100f));
-            gpuImage.setFilter(new G(brightness / 100f));
 
             imageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
         }
