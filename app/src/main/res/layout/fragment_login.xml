@@ -13,6 +13,14 @@
         android:layout_height="match_parent">
 
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googleSignInButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso" />
+
         <Button
             android:id="@+id/button6"
             android:layout_width="113dp"
@@ -63,8 +71,9 @@
             android:layout_margin="10dp"
             android:background="@drawable/borde"
             android:fontFamily="@font/rocksalt"
-            android:textColor="@color/black"
             android:hint="email"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/enunciado" />
 
 
@@ -75,8 +84,9 @@
             android:layout_margin="10dp"
             android:background="@drawable/borde"
             android:fontFamily="@font/rocksalt"
-            android:textColor="@color/black"
             android:hint="Password"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/email" />
 
         <Button
@@ -95,14 +105,15 @@
             android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#00000000"
             android:backgroundTint="@color/white"
+            android:elevation="0dp"
             android:fontFamily="@font/rocksalt"
             android:shadowColor="@color/white"
             android:text="Forgot Password?"
             android:textColor="@color/black"
             android:textSize="10sp"
-            android:elevation="0dp"
-            android:background="#00000000"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ingresar" />
 
         <Button
@@ -134,11 +145,13 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="396dp"
+            android:fontFamily="@font/rocksalt"
             android:gravity="center"
-            android:textSize="48sp"
+            android:text="Google Login"
+            android:textColor="@color/black"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageView" />
+            app:layout_constraintTop_toBottomOf="@+id/crearCuenta" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

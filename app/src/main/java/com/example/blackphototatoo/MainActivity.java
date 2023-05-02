@@ -45,12 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView((binding = ActivityMainBinding.inflate(getLayoutInflater())).getRoot());
 
-
-
-
         navController = ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment)).getNavController();
         NavigationUI.setupWithNavController(binding.bottomNavView, navController);
-
 
         // Obtener una referencia al DrawerLayout
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
