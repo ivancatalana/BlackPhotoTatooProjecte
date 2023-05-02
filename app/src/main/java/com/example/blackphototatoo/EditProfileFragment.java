@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link EditProfileFragment#newInstance} factory method to
@@ -86,6 +88,11 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 showPopup();
             }
+        });
+        view.findViewById(R.id.button22).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();            }
         });
         view.findViewById(R.id.button12).setOnClickListener(new View.OnClickListener() {
             @Override
