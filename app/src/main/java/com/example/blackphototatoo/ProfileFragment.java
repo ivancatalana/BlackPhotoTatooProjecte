@@ -1,10 +1,7 @@
 package com.example.blackphototatoo;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +9,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.blackphototatoo.databinding.FragmentProfileBinding;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
@@ -55,7 +54,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        profile= view.findViewById(R.id.imageView4);
+        profile= view.findViewById(R.id.imagen_perfil);
 
         Glide.with(this)
                 .load(getResources().getDrawable(R.drawable.profile))
@@ -115,8 +114,50 @@ public class ProfileFragment extends Fragment {
             view.findViewById(R.id.button5).setOnClickListener(v -> {
                 navController.navigate(R.id.editProfileFragment);
             });
+            //----------------------------------------------------------------------------------------------------------//----------------------------------------------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------------------------//----------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------Imagen y nombre de usuario--------------------------------------------------------//----------------------------------------------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------------------------//----------------------------------------------------------------------------------------------------------
+
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        View header = navigationView.getHeaderView(0);
+        final ImageView photo = view.findViewById(R.id.imagen_perfil);
+        final TextView name = view.findViewById(R.id.nameProfile);
+     //   final TextView email = view.findViewById(com.firebase.ui.auth.R.id.email);
 
 
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+
+                if (user != null) {
+                    if (user.getPhotoUrl() != null) {
+                        Glide.with(getContext())
+                                .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
+                                .circleCrop()
+                                .into(photo);
+
+
+                        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+    //                    email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    } else {
+
+                        Glide.with(getContext())
+                                .load(R.drawable.profile_)
+                                .circleCrop()
+                                .into(photo);
+
+
+                        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+//                        email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    }
+                }
+            }
+        });
     }
 
     @Override

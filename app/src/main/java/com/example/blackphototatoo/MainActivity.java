@@ -3,28 +3,40 @@ package com.example.blackphototatoo;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.blackphototatoo.databinding.ActivityMainBinding;
 import com.example.blackphototatoo.databinding.FragmentBottom3Binding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
 
         // Obtener una referencia al NavigationView
-        NavigationView navView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
@@ -105,7 +117,72 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new MyRecyclerViewFragment(), "Tab 3");
       //  viewPager.setAdapter(adapter);
        // tabLayout.setupWithViewPager(viewPager);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+
+        NavigationUI.setupWithNavController(navigationView, navController);
+        View header = navigationView.getHeaderView(0);
+   /*   //  final ImageView photo = header.findViewById(R.id.imagen_perfil);
+        final TextView name = header.findViewById(R.id.nameProfile);
+        final TextView email = header.findViewById(com.firebase.ui.auth.R.id.email);
+
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+
+                if (user != null) {
+                    if (user.getPhotoUrl() != null) {
+                        Glide.with(MainActivity.this)
+                                .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
+                                .circleCrop()
+                                .into(photo);
+
+
+                        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                        email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    } else {
+
+                        Glide.with(MainActivity.this)
+                                .load(R.drawable.profile)
+                                .circleCrop()
+                                .into(photo);
+
+
+                        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                        email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    }
+                }
+            }
+        });
+*/
+        FirebaseFirestore.getInstance().setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(false)
+                .build());
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            int requestCode = 0;
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
+        }
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller,
+                                             @NonNull NavDestination destination, @Nullable Bundle arguments) {
+
+                if (destination.getId() == R.id.fullscreenStartFragment) {
+                    // Hide status bar
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                }
+                else {
+                    // Show status bar
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                }
+            }
+        });
     }
+
 
     @Override
     public void onBackPressed() {

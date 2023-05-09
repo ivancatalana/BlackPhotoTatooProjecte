@@ -86,7 +86,9 @@ public class LoginFragment extends Fragment {
 
         botonSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { accederConEmail();
+            public void onClick(View view) {
+                if(emailEditText.getText().toString().equals("")&& passwordEditText.getText().toString().equals(""))accederDirecto();
+                else accederConEmail();
             }
         });
         botonCrearCuenta.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +97,21 @@ public class LoginFragment extends Fragment {
                 navController.navigate(R.id.action_loginFragment_to_createAccountFragment);
             }
         });
+    }
+
+    private void accederDirecto() {
+        mAuth.signInWithEmailAndPassword("ivanmm@gmail.com", "123456")
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            actualizarUI(mAuth.getCurrentUser());
+                        } else {
+                            Snackbar.make(requireView(), "Error: " + task.getException(), Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
