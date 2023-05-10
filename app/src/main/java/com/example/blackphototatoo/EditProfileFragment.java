@@ -2,6 +2,7 @@ package com.example.blackphototatoo;
 
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.getDefaultSize;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
@@ -10,7 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -25,13 +26,27 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
+
+import io.grpc.Compressor;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -160,18 +175,74 @@ public class EditProfileFragment extends Fragment {
         });
         builder.show();
     }
-    public static void pujaIguardarEnFirestore(final Uri mediaUri, FirebaseUser user) {
-        System.out.println(user.getUid()+ "  Nombre: " + user.getDisplayName()+ "-------------------------------------------------------");
-        FirebaseStorage.getInstance().getReference("profileImages/" +
-                        UUID.randomUUID())
-                .putFile(mediaUri)
-                .continueWithTask(task ->
-                        task.getResult().getStorage().getDownloadUrl())
-                .addOnSuccessListener(url ->
-                        FirebaseFirestore.getInstance().collection("profilePics")
-                                .document(user.getUid()).update("profilePhoto", url.toString())
-                );
+    public static void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user, final Context context) {
+        try {
+            Glide.with(context)
+                    .asBitmap()
+                    .load(mediaUri)
+                    .apply(new RequestOptions().override(800, 800)) // Establecer el tamaño máximo permitido
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 75, baos); // Comprimir la imagen con calidad del 75%
+                            byte[] imageData = baos.toByteArray();
+
+                            final StorageReference storageRef = FirebaseStorage.getInstance().getReference("profileImages/" + UUID.randomUUID());
+                            UploadTask uploadTask = storageRef.putBytes(imageData);
+                            uploadTask.continueWithTask(task -> {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException(); // Manejar cualquier error durante la carga de la imagen
+                                }
+
+                                // La imagen se ha cargado exitosamente, obtener la URL de descarga
+                                return storageRef.getDownloadUrl();
+                            }).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Uri downloadUri = task.getResult();
+
+                                    // La URL de descarga se ha obtenido, guardarla en Firestore
+                                    FirebaseFirestore.getInstance().collection("users")
+                                            .document(user.getUid())
+                                            .set(new HashMap<>())
+                                            .addOnSuccessListener(aVoid -> {
+                                                // El documento se ha creado correctamente
+                                                // Actualizar la foto de perfil del usuario
+                                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                        .setPhotoUri(downloadUri)
+                                                        .build();
+
+                                                user.updateProfile(profileUpdates)
+                                                        .addOnSuccessListener(aVoid1 -> {
+                                                            // La foto de perfil se ha actualizado correctamente
+                                                            showToast(context, "Imagen guardada correctamente");
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            // Error al actualizar la foto de perfil
+                                                            showToast(context, "Error al actualizar la foto de perfil");
+                                                        });
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Error al crear el documento
+                                                showToast(context, "Error al crear el documento en Firestore");
+                                            });
+                                } else {
+                                    // Error al obtener la URL de descarga
+                                    showToast(context, "Error al obtener la URL de descarga");
+                                }
+                            });
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast(context, "Error al cargar y comprimir la imagen");
+        }
     }
+
+    private static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -179,7 +250,7 @@ public class EditProfileFragment extends Fragment {
         if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.getData();
 
-            pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser());
+            pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser(), getContext());
         }
     }
 }
