@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "870987891336",
+    "project_id": "black-tatoo",
+    "storage_bucket": "black-tatoo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870987891336:android:2235e2b6d65b4fc61bd53d",
+        "android_client_info": {
+          "package_name": "com.example.blackphototatoo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870987891336-mona48ib81to0t9l3p19f35unt3jsin9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blackphototatoo",
+            "certificate_hash": "fd579ec166613fecb2bb592517123163299dbc9a"
+          }
+        },
+        {
+          "client_id": "870987891336-o80rbrcamihhnm7emdgd86tfokckie99.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKgimlfM2XoNSpq4zWGrcZfsHQ0tEZA0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870987891336-o80rbrcamihhnm7emdgd86tfokckie99.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

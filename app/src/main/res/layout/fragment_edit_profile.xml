@@ -35,7 +35,7 @@
             app:layout_constraintTop_toBottomOf="@+id/button9" />
 
         <Button
-            android:id="@+id/button8"
+            android:id="@+id/changePhoto"
             android:layout_width="298dp"
             android:layout_height="56dp"
             android:layout_marginTop="124dp"
@@ -56,7 +56,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.452"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button8" />
+            app:layout_constraintTop_toBottomOf="@+id/changePhoto" />
 
         <Button
             android:id="@+id/button10"

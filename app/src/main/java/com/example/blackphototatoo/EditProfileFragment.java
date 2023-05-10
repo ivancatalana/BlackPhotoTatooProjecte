@@ -1,7 +1,14 @@
 package com.example.blackphototatoo;
 
+
+import static android.app.Activity.RESULT_OK;
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,13 +17,21 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +39,10 @@ import com.google.firebase.auth.FirebaseAuth;
  * create an instance of this fragment.
  */
 public class EditProfileFragment extends Fragment {
+
+    private static final int REQUEST_CODE_SELECT_PHOTO = 1;
+
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,7 +52,11 @@ public class EditProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    Button editName;
+    private FirebaseAuth mAuth;
+    private Button editName;
+    private Uri selectedImageUri;
+    private View view;
+
     public EditProfileFragment() {
         // Required empty public constructor
     }
@@ -74,8 +97,10 @@ public class EditProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View viewn, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        view=viewn;
+        mAuth=FirebaseAuth.getInstance();
         editName= view.findViewById(R.id.button9);
         editName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +113,13 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 showPopup();
             }
+        });
+        view.findViewById(R.id.changePhoto).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
+                       }
         });
         view.findViewById(R.id.button22).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,5 +160,26 @@ public class EditProfileFragment extends Fragment {
         });
         builder.show();
     }
+    public static void pujaIguardarEnFirestore(final Uri mediaUri, FirebaseUser user) {
+        System.out.println(user.getUid()+ "  Nombre: " + user.getDisplayName()+ "-------------------------------------------------------");
+        FirebaseStorage.getInstance().getReference("profileImages/" +
+                        UUID.randomUUID())
+                .putFile(mediaUri)
+                .continueWithTask(task ->
+                        task.getResult().getStorage().getDownloadUrl())
+                .addOnSuccessListener(url ->
+                        FirebaseFirestore.getInstance().collection("profilePics")
+                                .document(user.getUid()).update("profilePhoto", url.toString())
+                );
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+
+            pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser());
+        }
+    }
 }
