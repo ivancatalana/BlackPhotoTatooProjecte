@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Context;
@@ -29,9 +31,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -48,75 +52,44 @@ import java.util.UUID;
 
 import io.grpc.Compressor;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EditProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class EditProfileFragment extends Fragment {
 
     private static final int REQUEST_CODE_SELECT_PHOTO = 1;
 
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private FirebaseAuth mAuth;
     private Button editName;
     private Uri selectedImageUri;
     private View view;
+    private PhotoView profileImageView;
 
     public EditProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EditProfileFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static EditProfileFragment newInstance(String param1, String param2) {
         EditProfileFragment fragment = new EditProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
+
     @Override
     public void onViewCreated(@NonNull View viewn, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view=viewn;
         mAuth=FirebaseAuth.getInstance();
         editName= view.findViewById(R.id.button9);
+        profileImageView = view.findViewById(R.id.imagen_perfil);
+
         editName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,6 +127,14 @@ public class EditProfileFragment extends Fragment {
         view.findViewById(R.id.button11).setOnClickListener(v -> {
             navController.navigate(R.id.action_blankFragment_to_bottom1Fragment);
         });
+
+        // Cargar la imagen de perfil utilizando Glide y PhotoView
+        if (selectedImageUri != null) {
+            Glide.with(this)
+                    .load(selectedImageUri)
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20))) // Opcional: Aplicar esquinas redondeadas a la imagen
+                    .into(profileImageView);
+        }
     }
     private void showPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -175,15 +156,16 @@ public class EditProfileFragment extends Fragment {
         });
         builder.show();
     }
-    public static void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user, final Context context) {
+    private void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user ,  final Context context) {
         try {
-            Glide.with(context)
-                    .asBitmap()
+            Glide.with(requireContext())
                     .load(mediaUri)
-                    .apply(new RequestOptions().override(800, 800)) // Establecer el tamaño máximo permitido
-                    .into(new SimpleTarget<Bitmap>() {
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(new SimpleTarget<Drawable>() {
                         @Override
-                        public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                        public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
+                            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 75, baos); // Comprimir la imagen con calidad del 75%
                             byte[] imageData = baos.toByteArray();
@@ -202,40 +184,29 @@ public class EditProfileFragment extends Fragment {
                                     Uri downloadUri = task.getResult();
 
                                     // La URL de descarga se ha obtenido, guardarla en Firestore
-                                    FirebaseFirestore.getInstance().collection("users")
-                                            .document(user.getUid())
-                                            .set(new HashMap<>())
-                                            .addOnSuccessListener(aVoid -> {
-                                                // El documento se ha creado correctamente
-                                                // Actualizar la foto de perfil del usuario
-                                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                                        .setPhotoUri(downloadUri)
-                                                        .build();
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setPhotoUri(downloadUri)
+                                            .build();
 
-                                                user.updateProfile(profileUpdates)
-                                                        .addOnSuccessListener(aVoid1 -> {
-                                                            // La foto de perfil se ha actualizado correctamente
-                                                            showToast(context, "Imagen guardada correctamente");
-                                                        })
-                                                        .addOnFailureListener(e -> {
-                                                            // Error al actualizar la foto de perfil
-                                                            showToast(context, "Error al actualizar la foto de perfil");
-                                                        });
+                                    user.updateProfile(profileUpdates)
+                                            .addOnSuccessListener(aVoid -> {
+                                                // La foto de perfil se ha actualizado correctamente
+                                                showToast(context,"Imagen guardada correctamente");
                                             })
                                             .addOnFailureListener(e -> {
-                                                // Error al crear el documento
-                                                showToast(context, "Error al crear el documento en Firestore");
+                                                // Error al actualizar la foto de perfil
+                                                showToast(context,"Error al actualizar la foto de perfil");
                                             });
                                 } else {
                                     // Error al obtener la URL de descarga
-                                    showToast(context, "Error al obtener la URL de descarga");
+                                    showToast(context,"Error al obtener la URL de descarga");
                                 }
                             });
                         }
                     });
         } catch (Exception e) {
             e.printStackTrace();
-            showToast(context, "Error al cargar y comprimir la imagen");
+            showToast(context,"Error al cargar y comprimir la imagen");
         }
     }
 

@@ -79,6 +79,8 @@ dependencies {
     implementation 'androidx.activity:activity:1.2.0-rc01'
     implementation 'androidx.fragment:fragment:1.3.0-rc01'
 
+    //Recortar Y hacer zoom a las imagenes
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
 
 
