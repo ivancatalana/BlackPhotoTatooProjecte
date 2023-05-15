@@ -48,14 +48,9 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/bottom2Fragment"
-        android:name="com.example.blackphototatoo.Bottom2Fragment"
+        android:name="com.example.blackphototatoo.EditFragment"
         android:label="Imagenes"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/bottom3Fragment"
-        android:name="com.example.blackphototatoo.Bottom3Fragment"
-        android:label="Busqueda"
-        tools:layout="@layout/fragment_bottom3" />
     <fragment
         android:id="@+id/recyclerElementosFragment"
         android:name="com.example.blackphototatoo.RecyclerElementosFragment"
@@ -136,5 +131,10 @@
         android:name="com.example.blackphototatoo.PostDiscoverFragment"
         android:label="fragment_post_discover"
         tools:layout="@layout/fragment_post_discover" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.blackphototatoo.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 
 </navigation>

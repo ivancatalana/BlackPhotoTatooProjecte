@@ -15,7 +15,7 @@
         android:title="IMAGES" />
 
     <item
-        android:id="@+id/bottom3Fragment"
+        android:id="@+id/mapFragment"
         android:icon="@drawable/visit"
         android:title="Radar" />
     />

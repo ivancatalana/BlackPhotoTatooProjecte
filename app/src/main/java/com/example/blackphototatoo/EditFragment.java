@@ -2,17 +2,13 @@ package com.example.blackphototatoo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,22 +17,15 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.google.android.material.navigation.NavigationView;
-
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageBrightnessFilter;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageContrastFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 /*
-public class Bottom2Fragment extends Fragment {
+public class EditFragment extends Fragment {
     private GPUImage gpuImage;
     private ImageView imageView;
     private SeekBar brightnessSeekBar;
@@ -44,17 +33,17 @@ public class Bottom2Fragment extends Fragment {
     private Uri imageUri;
 
 
-    public Bottom2Fragment() {
+    public EditFragment() {
         // constructor vacío requerido
     }
 
-    public Bottom2Fragment(Uri imageUri) {
+    public EditFragment(Uri imageUri) {
         this.imageUri = imageUri;
     }
 
  */
 
-    public class Bottom2Fragment extends Fragment {
+    public class EditFragment extends Fragment {
 
         private GPUImage gpuImage;
         private ImageView imageView;
@@ -186,7 +175,7 @@ public class Bottom2Fragment extends Fragment {
     }
 
 /*
-public class Bottom2Fragment extends Fragment {
+public class EditFragment extends Fragment {
 
     private GPUImage gpuImage;
     private ImageView imageView;

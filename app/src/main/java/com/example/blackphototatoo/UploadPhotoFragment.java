@@ -54,7 +54,7 @@ public class UploadPhotoFragment extends Fragment {
             public void onClick(View v) {
                 if (selectedImageUri != null) {
                     /*
-                    Bottom2Fragment bottom2Fragment = new Bottom2Fragment();
+                    EditFragment bottom2Fragment = new EditFragment();
                     Bundle args = new Bundle();
                     args.putParcelable("selectedImageUri", selectedImageUri);
                     bottom2Fragment.setArguments(args);
@@ -87,7 +87,7 @@ public class UploadPhotoFragment extends Fragment {
         selectNextFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navController.navigate(R.id.action_uploadPhotoFragment_to_bottom2Fragment);
+                navController.navigate(R.id.bottom2Fragment);
             }
         });
     }

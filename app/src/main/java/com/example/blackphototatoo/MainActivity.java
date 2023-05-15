@@ -30,7 +30,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.blackphototatoo.databinding.ActivityMainBinding;
-import com.example.blackphototatoo.databinding.FragmentBottom3Binding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (destination.getId() == R.id.bottom1Fragment
                         || destination.getId() == R.id.bottom2Fragment
-                        || destination.getId() == R.id.bottom3Fragment
+                        || destination.getId() == R.id.mapFragment
                         || destination.getId() == R.id.discoverFragment
                         || destination.getId() == R.id.tatooStoreFragment
                         || destination.getId() == R.id.uploadPhotoFragment)  {
@@ -102,10 +101,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        binding.bottomNavView.findViewById(R.id.bottom3Fragment).setOnClickListener(new View.OnClickListener() {
+        binding.bottomNavView.findViewById(R.id.mapFragment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, MapActivity.class));
+                navController.navigate(R.id.mapFragment);
             }
         });
         tabLayout = findViewById(R.id.tabLayout);
@@ -182,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     @Override
     public void onBackPressed() {

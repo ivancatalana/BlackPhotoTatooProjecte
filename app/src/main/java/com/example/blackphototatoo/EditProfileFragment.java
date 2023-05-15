@@ -6,6 +6,7 @@ import static android.view.View.getDefaultSize;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -190,6 +191,10 @@ public class EditProfileFragment extends Fragment {
 
                             final StorageReference storageRef = FirebaseStorage.getInstance().getReference("profileImages/" + UUID.randomUUID());
                             UploadTask uploadTask = storageRef.putBytes(imageData);
+                            ProgressDialog progressDialog = new ProgressDialog(context);
+                            progressDialog.setMessage("Actualizando foto de perfil...");
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
                             uploadTask.continueWithTask(task -> {
                                 if (!task.isSuccessful()) {
                                     throw task.getException(); // Manejar cualquier error durante la carga de la imagen
@@ -207,6 +212,7 @@ public class EditProfileFragment extends Fragment {
                                             .set(new HashMap<>())
                                             .addOnSuccessListener(aVoid -> {
                                                 // El documento se ha creado correctamente
+
                                                 // Actualizar la foto de perfil del usuario
                                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                                         .setPhotoUri(downloadUri)
@@ -216,10 +222,12 @@ public class EditProfileFragment extends Fragment {
                                                         .addOnSuccessListener(aVoid1 -> {
                                                             // La foto de perfil se ha actualizado correctamente
                                                             showToast(context, "Imagen guardada correctamente");
+                                                            progressDialog.dismiss();
                                                         })
                                                         .addOnFailureListener(e -> {
                                                             // Error al actualizar la foto de perfil
                                                             showToast(context, "Error al actualizar la foto de perfil");
+                                                            progressDialog.dismiss();
                                                         });
                                             })
                                             .addOnFailureListener(e -> {
