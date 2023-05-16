@@ -101,12 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        binding.bottomNavView.findViewById(R.id.mapFragment).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navController.navigate(R.id.mapFragment);
-            }
-        });
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
 

@@ -6,6 +6,7 @@ import static android.view.View.getDefaultSize;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -158,6 +159,10 @@ public class EditProfileFragment extends Fragment {
     }
     private void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user ,  final Context context) {
         try {
+            ProgressDialog progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Actualizando foto de perfil...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
             Glide.with(requireContext())
                     .load(mediaUri)
                     .apply(RequestOptions.circleCropTransform())
@@ -191,11 +196,13 @@ public class EditProfileFragment extends Fragment {
                                     user.updateProfile(profileUpdates)
                                             .addOnSuccessListener(aVoid -> {
                                                 // La foto de perfil se ha actualizado correctamente
-                                                showToast(context,"Imagen guardada correctamente");
+                                                showToast(context,"Imagen cambiada correctamente");
+                                                progressDialog.dismiss();
                                             })
                                             .addOnFailureListener(e -> {
                                                 // Error al actualizar la foto de perfil
                                                 showToast(context,"Error al actualizar la foto de perfil");
+                                                progressDialog.dismiss();
                                             });
                                 } else {
                                     // Error al obtener la URL de descarga
