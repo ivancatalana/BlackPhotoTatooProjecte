@@ -17,12 +17,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -33,11 +30,13 @@ public class UploadPhotoFragment extends Fragment {
     private Uri selectedImageUri;
     NavController navController;
     View view;
+    private Button effectsButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-      view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
+        view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
+        effectsButton = view.findViewById(R.id.effectButton);
 
         Button selectPhotoButton = view.findViewById(R.id.select_photo_button);
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -73,9 +72,20 @@ public class UploadPhotoFragment extends Fragment {
                 }
             }
         });
+        effectsButton.setOnClickListener(v -> {
+            if (selectedImageUri != null) {
+                Bundle args = new Bundle();
+                args.putParcelable("selectedImageUri", selectedImageUri);
+                navController.navigate(R.id.action_uploadFragment_to_editPhotoFragment, args);
+            } else {
+                Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         return view;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -83,14 +93,10 @@ public class UploadPhotoFragment extends Fragment {
         // Establecer el NavController en la vista
         Navigation.setViewNavController(view, navController);
 
-        Button selectNextFragment = view.findViewById(R.id.effectfragment);
-        selectNextFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navController.navigate(R.id.bottom2Fragment);
-            }
-        });
     }
+
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
