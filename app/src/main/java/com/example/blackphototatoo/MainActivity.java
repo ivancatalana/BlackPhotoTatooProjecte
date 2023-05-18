@@ -69,16 +69,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDestinationChanged(@NonNull NavController controller,
                                              @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                if (destination.getId() == R.id.bottom2Fragment) {
-                    // Mostrar Drawer Menu
-                    drawerLayout.openDrawer(GravityCompat.END);
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                }
-                else {
-                   // Ocultar el menú de navegación
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-                }
 
                 if (destination.getId() == R.id.fullscreenStartFragment) {
                     // Hide status bar
@@ -90,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 if (destination.getId() == R.id.bottom1Fragment
-                        || destination.getId() == R.id.bottom2Fragment
                         || destination.getId() == R.id.mapFragment
                         || destination.getId() == R.id.discoverFragment
                         || destination.getId() == R.id.tatooStoreFragment

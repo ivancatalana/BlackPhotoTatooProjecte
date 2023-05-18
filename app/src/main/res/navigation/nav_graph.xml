@@ -46,11 +46,7 @@
         android:name="com.example.blackphototatoo.ProfileFragment"
         android:label="Perfil"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/bottom2Fragment"
-        android:name="com.example.blackphototatoo.EditFragment"
-        android:label="Imagenes"
-        tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/recyclerElementosFragment"
         android:name="com.example.blackphototatoo.RecyclerElementosFragment"
