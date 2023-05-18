@@ -1,13 +1,17 @@
 package com.example.blackphototatoo;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,15 +20,28 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class MapFragment extends Fragment {
@@ -56,8 +73,108 @@ public class MapFragment extends Fragment {
         mapController.setCenter(startPoint);
         mapView.invalidate();
         createmarker();
+        // Agregar el receptor de eventos de clic en el mapa
+        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+                return false;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint geoPoint) {
+                // Al hacer clic en el mapa, muestra las coordenadas y guárdalas en Firestore
+                double latitude = geoPoint.getLatitude();
+                double longitude = geoPoint.getLongitude();
+                Toast.makeText(getActivity(), "Latitud: " + latitude + ", Longitud: " + longitude, Toast.LENGTH_SHORT).show();
+
+                // Aquí puedes agregar la lógica para guardar las coordenadas en Firestore
+                // usando la biblioteca de Firestore de Firebase
+                // Obtén una instancia de FirebaseFirestore
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+                Map<String, Object> coordenadas = new HashMap<>();
+                coordenadas.put("latitude", latitude);
+                coordenadas.put("longitude", longitude);
+                coordenadas.put("name", "Testing purposes");
+
+                db.collection("coordenadas")
+                        .add(coordenadas)
+                        .addOnSuccessListener(documentReference -> {
+                            // La operación fue exitosa
+                            Toast.makeText(getActivity(), "Coordenadas guardadas en Firestore", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            // Ocurrió un error al guardar las coordenadas
+                            Toast.makeText(getActivity(), "Error al guardar las coordenadas", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Error al guardar las coordenadas", e);
+                        });
+//                //Coge el nombre de una coordenada en FireStore y crea un marcador en el mapa
+//                db.collection("coordenadas")
+//                        .whereEqualTo("name", "Testing purposes")
+//                        .get()
+//                        .addOnSuccessListener(querySnapshot -> {
+//                            for (QueryDocumentSnapshot document : querySnapshot) {
+//                                // Obtén las coordenadas y el nombre del documento
+//                                double latit = document.getDouble("latitude");
+//                                double longit = document.getDouble("longitude");
+//                                String nombre = document.getString("name");
+//
+//                                // Crea el marcador en el mapa utilizando las coordenadas y el nombre
+//                                // Aquí debes agregar tu lógica específica para crear el marcador en el mapa
+//                                // Utiliza la biblioteca o API de mapas correspondiente a tu plataforma (Google Maps, Mapbox, etc.)
+//                                // Puedes utilizar los valores de latitude, longitude y nombre para crear el marcador en el mapa
+//                                Marker markerp = new Marker(mapView);
+//                                markerp.setPosition(new GeoPoint(latit, longit));
+//                                markerp.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+//                                markerp.setTitle(nombre);
+//                                System.out.println(nombre);
+//                                markerp.setPanToView(true);
+//                                mapView.getOverlays().add(markerp);
+//                                mapView.invalidate();
+//                            }
+//                        })
+//                        .addOnFailureListener(e -> {
+//                            // Ocurrió un error al realizar la consulta
+//                            Toast.makeText(getActivity(), "Error al buscar las coordenadas", Toast.LENGTH_SHORT).show();
+//                            Log.e(TAG, "Error al buscar las coordenadas", e);
+//                        });
+                return true;
+            }
+        });
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("coordenadas")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        // Obtén las coordenadas y el nombre del documento
+                        double latitude = document.getDouble("latitude");
+                        double longitude = document.getDouble("longitude");
+                        String nombre = document.getString("nombre");
+
+                        // Crea el marcador en el mapa utilizando las coordenadas y el nombre
+                        Marker marker = new Marker(mapView);
+                        marker.setPosition(new GeoPoint(latitude, longitude));
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        marker.setTitle(nombre);
+                        marker.setPanToView(true);
+                        mapView.getOverlays().add(marker);
+                    }
+
+                    // Actualiza el mapa para mostrar los marcadores
+                    mapView.invalidate();
+                })
+                .addOnFailureListener(e -> {
+                    // Ocurrió un error al realizar la consulta
+                    Toast.makeText(getActivity(), "Error al buscar las coordenadas", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error al buscar las coordenadas", e);
+                });
+
+
+        mapView.getOverlays().add(0, mapEventsOverlay);
         return rootView;
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -139,7 +256,6 @@ public class MapFragment extends Fragment {
         marker4.setTitle("StudioTatoo SantAdri");
 
 
-
         // Load image with Glide
         ImageView imageView = new ImageView(this.getContext());
         Glide.with(this)
@@ -159,6 +275,7 @@ public class MapFragment extends Fragment {
 
         mapView.invalidate();
     }
+
     public class CustomMarkerInfoWindow extends MarkerInfoWindow {
         private ImageView imageView;
 
