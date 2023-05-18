@@ -46,11 +46,7 @@
         android:name="com.example.blackphototatoo.ProfileFragment"
         android:label="Perfil"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/bottom2Fragment"
-        android:name="com.example.blackphototatoo.EditFragment"
-        android:label="Imagenes"
-        tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/recyclerElementosFragment"
         android:name="com.example.blackphototatoo.RecyclerElementosFragment"
@@ -136,5 +132,13 @@
         android:name="com.example.blackphototatoo.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/editPhotoFragment"
+        android:name="com.example.blackphototatoo.EditPhotoFragment"
+        android:label="fragment_edit_photo"
+        tools:layout="@layout/fragment_edit_photo" />
+    <action
+        android:id="@+id/action_uploadFragment_to_editPhotoFragment"
+        app:destination="@id/editPhotoFragment" />
 
 </navigation>
