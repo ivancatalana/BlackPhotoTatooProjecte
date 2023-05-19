@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -37,12 +38,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
     private NavController navController;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private List<Integer> fragmentStack = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,9 +169,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     @Override
     public void onBackPressed() {
-        // No hacemos nada para evitar que el botón de "Atrás" funcione
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+
+        if (currentFragment instanceof ProfileFragment
+                || currentFragment instanceof MapFragment
+                || currentFragment instanceof DiscoverFragment
+                || currentFragment instanceof TatooStoreFragment
+                || currentFragment instanceof UploadPhotoFragment) {
+            binding.bottomNavView.setVisibility(View.VISIBLE);
+        } else {
+            binding.bottomNavView.setVisibility(View.GONE);
+            super.onBackPressed();
+        }
     }
+
+
+
+
 }

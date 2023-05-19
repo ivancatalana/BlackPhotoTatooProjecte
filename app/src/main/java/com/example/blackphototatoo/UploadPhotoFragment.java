@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,21 @@ public class UploadPhotoFragment extends Fragment {
     private Button effectsButton;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Evita volver atras al splashScreen
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                //  Handle the back button even
+                // Aqui podemos configurar el comprotamiento del boton back
+                Log.d("BACKBUTTON", "Back button clicks");
+            }
+        };
+
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
@@ -44,6 +60,16 @@ public class UploadPhotoFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
+            }
+        });
+
+        Button nuevaPublicacionButton = view.findViewById(R.id.nuevaPublicacionButton);
+        nuevaPublicacionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.nuevaPublicacionFragment);
+
             }
         });
 
@@ -65,7 +91,7 @@ public class UploadPhotoFragment extends Fragment {
                     fragmentTransaction.commit();
 
                      */
-                    navController.navigate(R.id.editPhotoFragment);
+                    navController.navigate(R.id.homeFragment);
 
                 } else {
                     Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
