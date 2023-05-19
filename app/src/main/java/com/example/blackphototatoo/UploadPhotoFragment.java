@@ -65,7 +65,7 @@ public class UploadPhotoFragment extends Fragment {
                     fragmentTransaction.commit();
 
                      */
-                    navController.navigate(R.id.action_uploadPhotoFragment_to_bottom2Fragment);
+                    navController.navigate(R.id.editPhotoFragment);
 
                 } else {
                     Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();

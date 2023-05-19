@@ -83,9 +83,6 @@
         android:name="com.example.blackphototatoo.UploadPhotoFragment"
         android:label="fragment_upload_photo"
         tools:layout="@layout/fragment_upload_photo" />
-    <action
-        android:id="@+id/action_uploadPhotoFragment_to_bottom2Fragment"
-        app:destination="@id/bottom2Fragment" />
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.blackphototatoo.SearchFragment"
