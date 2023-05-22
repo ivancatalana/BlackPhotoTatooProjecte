@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/blankFragment"
-        android:name="com.example.blackphototatoo.BlankFragment"
+        android:name="com.example.blackphototatoo.SplashScreenFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" />
     <action
@@ -163,6 +163,21 @@
         android:name="com.example.blackphototatoo.NuevaPublicacionFragment"
         android:label="fragment_nueva_publicacion"
         tools:layout="@layout/fragment_nueva_publicacion" />
+    <fragment
+        android:id="@+id/editor_ai_Fragment"
+        android:name="com.example.blackphototatoo.AIEditorFragment"
+        android:label="AIEditorFragment"
+        tools:layout="@layout/fragment_nueva_publicacion"/>
+    <fragment
+        android:id="@+id/aiChatFragment"
+        android:name="com.example.blackphototatoo.AiChatFragment"
+        android:label="AiChatFragment"
+        tools:layout="@layout/fragment_ai_chat" />
+    <fragment
+        android:id="@+id/discoverFirebaseFragment"
+        android:name="com.example.blackphototatoo.DiscoverFirebaseFragment"
+        android:label="fragment_discover_firebase"
+        tools:layout="@layout/fragment_discover_firebase" />
 
 
 </navigation>

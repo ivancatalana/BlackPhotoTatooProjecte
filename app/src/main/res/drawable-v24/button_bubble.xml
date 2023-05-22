@@ -1,0 +1,15 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo transparente del botón -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+    <!-- Sombra -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />  <!-- Color de fondo -->
+            <corners android:radius="56dp" />  <!-- Radio de las esquinas -->
+        </shape>
+    </item>
+</layer-list>

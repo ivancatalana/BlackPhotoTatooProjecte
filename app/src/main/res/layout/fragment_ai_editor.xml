@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:clickable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/placeholder_image"
+        app:layout_constraintDimensionRatio="16:9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/uploadButton" />
+
+
+    <Button
+        android:id="@+id/uploadButton"
+        android:layout_width="191dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_bubble"
+        android:enabled="false"
+        android:text="Black/White"
+        app:layout_constraintBottom_toTopOf="@+id/promtEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/btnRotate"
+        android:layout_width="140dp"
+        android:layout_height="55dp"
+        android:background="@drawable/button_bubble"
+        android:text="Rotate 90°"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
+
+    <ImageView
+        android:id="@+id/serverImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRotate"
+        app:layout_constraintBottom_toTopOf="@+id/promtEditText" />
+
+    <EditText
+        android:id="@+id/promtEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/borde"
+        android:gravity="center"
+        android:hint="Prompt"
+        android:imeOptions="actionNone"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSend"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/uploadButton"
+        tools:textColorHint="@color/material_dynamic_neutral50" />
+
+
+    <ImageButton
+        android:id="@+id/btnSend"
+        android:layout_width="48dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_send"
+        app:layout_constraintBottom_toBottomOf="@+id/promtEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/promtEditText" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

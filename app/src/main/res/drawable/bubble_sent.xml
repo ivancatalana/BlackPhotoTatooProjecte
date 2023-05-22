@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AE8BC34A" /> <!-- Color verde para el globo enviado -->
+    <corners android:radius="8dp" />
+</shape>
