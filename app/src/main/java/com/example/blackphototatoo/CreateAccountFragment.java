@@ -104,7 +104,7 @@ public class CreateAccountFragment extends Fragment {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                                         String child = databaser.getKey();
-                                        dataSnapshot1.getRef().child("uname").setValue(mAuth.getCurrentUser().getEmail());
+                                        dataSnapshot1.getRef().child("name").setValue(mAuth.getCurrentUser().getEmail());
                                     }
                                 }
 

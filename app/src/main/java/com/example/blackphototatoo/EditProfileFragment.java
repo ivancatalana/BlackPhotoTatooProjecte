@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -43,6 +44,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -94,15 +100,45 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View viewn, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view=viewn;
-        mAuth=FirebaseAuth.getInstance();
-        editName= view.findViewById(R.id.button9);
+        view = viewn;
+        mAuth = FirebaseAuth.getInstance();
+        editName = view.findViewById(R.id.button9);
         profileImageView = view.findViewById(R.id.imagen_perfil);
 
         editName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = showPopup();
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build();
 
+                mAuth.getCurrentUser().updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User name updated.");
+                                    Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                final DatabaseReference databaser = FirebaseDatabase.getInstance().getReference("users");
+                com.google.firebase.database.Query query = databaser.orderByChild("uid").equalTo(mAuth.getCurrentUser().getUid());
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                            String child = databaser.getKey();
+                            dataSnapshot1.getRef().child("name").setValue(name);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
         view.findViewById(R.id.button20).setOnClickListener(new View.OnClickListener() {
@@ -116,35 +152,21 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
-                       }
+            }
         });
         view.findViewById(R.id.button22).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();            }
+                FirebaseAuth.getInstance().signOut();
+            }
         });
         view.findViewById(R.id.button12).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = showPopup();
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)
-                        .build();
-
-                mAuth.getCurrentUser().updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    //Log.d(TAG, "User profile updated.");
-//                                                Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
             }
         });
 
-                NavController navController = Navigation.findNavController(view);
+        NavController navController = Navigation.findNavController(view);
 
         // navegar a otro fragmento
         view.findViewById(R.id.button11).setOnClickListener(v -> {
@@ -159,6 +181,7 @@ public class EditProfileFragment extends Fragment {
                     .into(profileImageView);
         }
     }
+
     private String showPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
@@ -180,7 +203,8 @@ public class EditProfileFragment extends Fragment {
         builder.show();
         return editText.getText().toString();
     }
-    private void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user ,  final Context context) {
+
+    private void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user, final Context context) {
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             CollectionReference usersCollection = db.collection("users");
@@ -224,7 +248,7 @@ public class EditProfileFragment extends Fragment {
                             }).addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Uri downloadUri = task.getResult();
-                                    Users u = new Users(downloadUri.toString(),user.getUid(),user.getDisplayName(),user.getEmail());
+                                    Users u = new Users(downloadUri.toString(), user.getUid(), user.getDisplayName(), user.getEmail());
                                     FirebaseFirestore.getInstance().collection("users").add(u);
                                     // La URL de descarga se ha obtenido, guardarla en Firestore
                                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -234,24 +258,24 @@ public class EditProfileFragment extends Fragment {
                                     user.updateProfile(profileUpdates)
                                             .addOnSuccessListener(aVoid -> {
                                                 // La foto de perfil se ha actualizado correctamente
-                                                showToast(context,"Imagen cambiada correctamente");
+                                                showToast(context, "Imagen cambiada correctamente");
                                                 progressDialog.dismiss();
                                             })
                                             .addOnFailureListener(e -> {
                                                 // Error al actualizar la foto de perfil
-                                                showToast(context,"Error al actualizar la foto de perfil");
+                                                showToast(context, "Error al actualizar la foto de perfil");
                                                 progressDialog.dismiss();
                                             });
                                 } else {
                                     // Error al obtener la URL de descarga
-                                    showToast(context,"Error al obtener la URL de descarga");
+                                    showToast(context, "Error al obtener la URL de descarga");
                                 }
                             });
                         }
                     });
         } catch (Exception e) {
             e.printStackTrace();
-            showToast(context,"Error al cargar y comprimir la imagen");
+            showToast(context, "Error al cargar y comprimir la imagen");
         }
     }
 
@@ -266,7 +290,7 @@ public class EditProfileFragment extends Fragment {
         if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.getData();
 
-            pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser(), getContext());
+            pujaIguardarEnFirestore(selectedImageUri, mAuth.getCurrentUser(), getContext());
         }
     }
 }
