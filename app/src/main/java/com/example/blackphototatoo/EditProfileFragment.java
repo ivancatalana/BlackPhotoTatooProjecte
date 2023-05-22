@@ -37,10 +37,18 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -57,7 +65,7 @@ public class EditProfileFragment extends Fragment {
 
     private static final int REQUEST_CODE_SELECT_PHOTO = 1;
 
-
+    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private Button editName;
     private Uri selectedImageUri;
@@ -94,7 +102,7 @@ public class EditProfileFragment extends Fragment {
         editName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup();
+
             }
         });
         view.findViewById(R.id.button20).setOnClickListener(new View.OnClickListener() {
@@ -118,7 +126,21 @@ public class EditProfileFragment extends Fragment {
         view.findViewById(R.id.button12).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup();
+                String name = showPopup();
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build();
+
+                mAuth.getCurrentUser().updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    //Log.d(TAG, "User profile updated.");
+//                                                Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
             }
         });
 
@@ -137,7 +159,7 @@ public class EditProfileFragment extends Fragment {
                     .into(profileImageView);
         }
     }
-    private void showPopup() {
+    private String showPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.modal, null);
@@ -156,9 +178,24 @@ public class EditProfileFragment extends Fragment {
             }
         });
         builder.show();
+        return editText.getText().toString();
     }
     private void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user ,  final Context context) {
         try {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference usersCollection = db.collection("users");
+            Query query = usersCollection.whereEqualTo("uid", user.getUid());
+
+            query.get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot querySnapshot) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                // Borra el documento
+                                document.getReference().delete();
+                            }
+                        }
+                    });
             ProgressDialog progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Actualizando foto de perfil...");
             progressDialog.setCancelable(false);
@@ -187,7 +224,8 @@ public class EditProfileFragment extends Fragment {
                             }).addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Uri downloadUri = task.getResult();
-
+                                    Users u = new Users(downloadUri.toString(),user.getUid(),user.getDisplayName(),user.getEmail());
+                                    FirebaseFirestore.getInstance().collection("users").add(u);
                                     // La URL de descarga se ha obtenido, guardarla en Firestore
                                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                             .setPhotoUri(downloadUri)
