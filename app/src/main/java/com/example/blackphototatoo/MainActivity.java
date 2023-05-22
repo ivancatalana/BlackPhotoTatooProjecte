@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (destination.getId() == R.id.bottom1Fragment
                         || destination.getId() == R.id.mapFragment
+                        || destination.getId() == R.id.profileFragment
                         || destination.getId() == R.id.discoverFragment
                         || destination.getId() == R.id.tatooStoreFragment
                         || destination.getId() == R.id.uploadPhotoFragment)  {

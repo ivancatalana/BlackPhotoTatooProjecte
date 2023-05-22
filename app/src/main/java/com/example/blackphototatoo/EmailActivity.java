@@ -1,20 +1,25 @@
 package com.example.blackphototatoo;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +31,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,11 +51,14 @@ public class EmailActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private List<ChatMessage> messageList;
 
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_fragment);
+
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -117,13 +127,15 @@ public class EmailActivity extends AppCompatActivity {
 
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                             String content = document.getString("content");
-                            Date timestamp = document.getDate("timestamp"); String userId = document.getString("user");
-
+                            Date timestamp = document.getDate("timestamp");
+                            String userId = document.getString("user");
                             // Mostrar solo los mensajes del usuario autenticado
                             if (userId != null && userId.equals(currentUser.getUid())) {
 
                             }
-                            ChatMessage message = new ChatMessage(content, timestamp);
+                            boolean isSender = userId != null && userId.equals(currentUser.getUid());
+
+                            ChatMessage message = new ChatMessage(content, timestamp, userId, isSender);
                             messageList.add(message);
 
                         }
@@ -134,16 +146,9 @@ public class EmailActivity extends AppCompatActivity {
                 });
     }
     private String generateConversationId(String userId1, String userId2) {
-        List<String> userIds = new ArrayList<>();
-        userIds.add(userId1);
-        userIds.add(userId2);
-        Collections.sort(userIds); // Ordenar los UIDs para asegurar la consistencia
-
-        StringBuilder sb = new StringBuilder();
-        for (String userId : userIds) {
-            sb.append(userId);
-        }
-        return sb.toString();
+        String sortedUid1 = userId1.compareTo(userId2) < 0 ? userId1 : userId2;
+        String sortedUid2 = userId1.compareTo(userId2) < 0 ? userId2 : userId1;
+        return sortedUid1 + sortedUid2;
     }
 
     private class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
@@ -164,6 +169,7 @@ public class EmailActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
             ChatMessage message = messageList.get(position);
             holder.bind(message);
+
         }
 
         @Override
@@ -174,19 +180,48 @@ public class EmailActivity extends AppCompatActivity {
         public class MessageViewHolder extends RecyclerView.ViewHolder {
             private TextView contentTextView;
             private TextView timestampTextView;
+            private ImageView profileImageView;
 
             public MessageViewHolder(@NonNull View itemView) {
                 super(itemView);
                 contentTextView = itemView.findViewById(R.id.contentTextView);
                 timestampTextView = itemView.findViewById(R.id.timestampTextView);
+                profileImageView = itemView.findViewById(R.id.profileImageView);
             }
 
             public void bind(ChatMessage message) {
-                contentTextView.setText(message.getContent());
-
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                 String timestamp = dateFormat.format(message.getTimestamp());
-                timestampTextView.setText(timestamp);
+                contentTextView.setText(message.getContent());
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) contentTextView.getLayoutParams();
+                if (message.isSender()) {
+                    timestampTextView.setText("\n" + "                                      " + timestamp + "\n");
+                    layoutParams.setMarginStart(550); // Alinear a la derecha
+                    contentTextView.setBackgroundResource(R.drawable.message_bubble_right);
+                } else {
+                    timestampTextView.setText("\n"+ timestamp + "\n");
+                    layoutParams.setMarginStart(0); // Alinear a la izquierda
+                    contentTextView.setBackgroundResource(R.drawable.message_bubble_left);
+                }
+                contentTextView.setLayoutParams(layoutParams);
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference profileRef = storage.getReference().child("profileImages/").child("981f2c0f-6d4a-40de-9b34-0e55654932d2");
+
+                profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(itemView.getContext())
+                                .load(uri)
+                                .into(profileImageView);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Manejo de errores en caso de que no se pueda obtener la foto de perfil
+                        // Puedes mostrar una imagen de perfil predeterminada o dejar el ImageView vacío
+                    }
+                });
+
             }
         }
 

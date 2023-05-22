@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,25 +27,15 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
- */
+
 public class DiscoverFragment extends Fragment {
-    protected ElementosViewModel elementosViewModel;
     private NavController navController;
     private RecyclerView recyclerView;
+    private Parcelable recyclerViewState;
 
     public DiscoverFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment DiscoverFragment.
-     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,15 +68,25 @@ public class DiscoverFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        List<MyObject> myObjects = new ArrayList<>();
-        myObjects.add(new MyObject(R.drawable.e5, "Objeto 1"));
-        myObjects.add(new MyObject(R.drawable.e2, "Objeto 2"));
-        myObjects.add(new MyObject(R.drawable.e3, "Objeto 3"));
-        myObjects.add(new MyObject(R.drawable.e4, "Objeto 4"));
-        myObjects.add(new MyObject(R.drawable.e1, "Objeto 5"));
-        MyAdapter adapter = new MyAdapter(myObjects);
-        adapter.setNavController(navController);
-        recyclerView.setAdapter(adapter);
+//        List<MyObject> myObjects = new ArrayList<>();
+//        myObjects.add(new MyObject(R.drawable.e5, "Objeto 1"));
+//        myObjects.add(new MyObject(R.drawable.e2, "Objeto 2"));
+//        myObjects.add(new MyObject(R.drawable.e3, "Objeto 3"));
+//        myObjects.add(new MyObject(R.drawable.e4, "Objeto 4"));
+//        myObjects.add(new MyObject(R.drawable.e1, "Objeto 5"));
+//        MyAdapter adapter = new MyAdapter(myObjects);
+//        adapter.setNavController(navController);
+//        recyclerView.setAdapter(adapter);
+        if (savedInstanceState != null) {
+            recyclerViewState = savedInstanceState.getParcelable("recycler_state");
+            try {
+
+//                postsRecyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            }
+            catch ( NullPointerException n ){
+                System.out.println("error");
+            }
+        }
 
 
         // navegar a otro fragmento
