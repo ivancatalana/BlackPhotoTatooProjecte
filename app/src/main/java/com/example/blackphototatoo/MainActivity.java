@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView((binding = ActivityMainBinding.inflate(getLayoutInflater())).getRoot());
-
         navController = ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment)).getNavController();
         NavigationUI.setupWithNavController(binding.bottomNavView, navController);
 
@@ -145,6 +144,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 */
+
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+//                System.out.println(user.getEmail());
+            }
+        });
         FirebaseFirestore.getInstance().setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
                 .build());
@@ -187,7 +194,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-
-
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, puedes realizar las acciones necesarias aquí
+            } else {
+                // Permiso denegado, debes manejar esta situación según tus necesidades
+            }
+        }
+    }
 }

@@ -72,25 +72,31 @@ public class UploadPhotoFragment extends Fragment {
 
             }
         });
+       Button chatIA = view.findViewById(R.id.chatButton);
+        chatIA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.editor_ai_Fragment);
+
+            }
+        });
+  Button chatIAMessages = view.findViewById(R.id.buttonAiMessages);
+        chatIAMessages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.aiChatFragment);
+
+            }
+        });
 
         Button switchToBottom2Button = view.findViewById(R.id.switch_to_bottom2_button);
         switchToBottom2Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (selectedImageUri != null) {
-                    /*
-                    EditFragment bottom2Fragment = new EditFragment();
-                    Bundle args = new Bundle();
-                    args.putParcelable("selectedImageUri", selectedImageUri);
-                    bottom2Fragment.setArguments(args);
 
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.uploadPhotoFragment, bottom2Fragment);
-                    //fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-
-                     */
                     navController.navigate(R.id.homeFragment);
 
                 } else {

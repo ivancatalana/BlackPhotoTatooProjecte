@@ -56,36 +56,7 @@ public class HomeFragment extends Fragment {
 //
 
     }
-/*
-    //    //Codigo que activa El drawer desplegable Pero con Un Main(guarrete)
-    private MainActivity main;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        main = (MainActivity) activity;
-        main.unlockDrawer();
-
-    }
-
-
- */
-    /*
-    //Codigo que activa El drawer desplegable
-    private MyInterface myInterface;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            myInterface = (MyInterface) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement MyInterface");
-        }
-    }
-//
-
-     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
