@@ -162,7 +162,12 @@
         android:id="@+id/nuevaPublicacionFragment"
         android:name="com.example.blackphototatoo.NuevaPublicacionFragment"
         android:label="fragment_nueva_publicacion"
-        tools:layout="@layout/fragment_nueva_publicacion" />
+        tools:layout="@layout/fragment_nueva_publicacion"/>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.blackphototatoo.ProfileFragment"
+        android:label="fragment_perfil"
+        tools:layout="@layout/fragment_profile"/>
 
 
 </navigation>

@@ -153,7 +153,7 @@ public class ProfileFragment extends Fragment {
 
                 if (user != null) {
                     if (user.getPhotoUrl() != null) {
-                        Glide.with(getContext())
+                        Glide.with(requireContext())
                                 .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
                                 .circleCrop()
                                 .into(photo);
@@ -177,9 +177,9 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        binding = null;
+//    }
 }
