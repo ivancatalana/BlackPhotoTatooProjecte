@@ -101,6 +101,7 @@ public class EditProfileFragment extends Fragment {
                 // Cierra completamente la aplicación
                 System.out.println(mAuth.getCurrentUser().getEmail());
                navController.navigate(R.id.loginFragment);
+
             }
         });
         view.findViewById(R.id.button20).setOnClickListener(new View.OnClickListener() {
