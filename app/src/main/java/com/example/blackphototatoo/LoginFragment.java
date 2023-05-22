@@ -44,7 +44,6 @@ public class LoginFragment extends Fragment {
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private FirebaseAuth mAuth;
     NavController navController;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,11 +54,13 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+//        System.out.println(mAuth.getCurrentUser().getEmail()+"--------------------------------------------------------------------------");
         navController = Navigation.findNavController(view);
         botonSiguiente = view.findViewById(R.id.ingresar);
         botonCrearCuenta=view.findViewById(R.id.crearCuenta);
         googleSignInButton = view.findViewById(R.id. googleSignInButton);
         emailEditText = view.findViewById(R.id.email);
+        if(mAuth.getCurrentUser()!=null)navController.navigate(R.id.discoverFragment);
         passwordEditText = view.findViewById(R.id.password);
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -76,7 +77,7 @@ public class LoginFragment extends Fragment {
                         }
                     }
                 });
-
+        mAuth = FirebaseAuth.getInstance();
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

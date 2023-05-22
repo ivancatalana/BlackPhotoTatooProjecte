@@ -2,8 +2,6 @@ package com.example.blackphototatoo;
 
 
 import static android.app.Activity.RESULT_OK;
-import static android.view.View.getDefaultSize;
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -22,13 +20,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -37,29 +33,26 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.UUID;
-
-import io.grpc.Compressor;
 
 public class EditProfileFragment extends Fragment {
 
     private static final int REQUEST_CODE_SELECT_PHOTO = 1;
 
-
+    private NavController navController;   // <-----------------
     private FirebaseAuth mAuth;
     private Button editName;
+    private Button signOut;
     private Uri selectedImageUri;
     private View view;
     private PhotoView profileImageView;
@@ -89,12 +82,25 @@ public class EditProfileFragment extends Fragment {
         view=viewn;
         mAuth=FirebaseAuth.getInstance();
         editName= view.findViewById(R.id.button9);
+        signOut= view.findViewById(R.id.buttonSignOut);
         profileImageView = view.findViewById(R.id.imagen_perfil);
-
+        navController = Navigation.findNavController(view);
         editName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPopup();
+            }
+        });
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoogleSignIn.getClient(requireActivity(), new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .build()).signOut();
+                FirebaseAuth.getInstance().signOut();
+                // Cierra completamente la aplicación
+                System.out.println(mAuth.getCurrentUser().getEmail());
+               navController.navigate(R.id.loginFragment);
             }
         });
         view.findViewById(R.id.button20).setOnClickListener(new View.OnClickListener() {
@@ -110,11 +116,7 @@ public class EditProfileFragment extends Fragment {
                 startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
                        }
         });
-        view.findViewById(R.id.button22).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();            }
-        });
+
         view.findViewById(R.id.button12).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
