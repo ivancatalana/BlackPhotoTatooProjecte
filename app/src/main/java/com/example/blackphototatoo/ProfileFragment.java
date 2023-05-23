@@ -71,7 +71,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        profile= view.findViewById(R.id.imagen_perfil);
+        profile= view.findViewById(R.id.friendProfileImageView);
 
         Glide.with(this)
                 .load(getResources().getDrawable(R.drawable.profile))
@@ -140,7 +140,7 @@ public class ProfileFragment extends Fragment {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         View header = navigationView.getHeaderView(0);
-        final ImageView photo = view.findViewById(R.id.imagen_perfil);
+        final ImageView photo = view.findViewById(R.id.friendProfileImageView);
         final TextView name = view.findViewById(R.id.nameProfile);
      //   final TextView email = view.findViewById(com.firebase.ui.auth.R.id.email);
 

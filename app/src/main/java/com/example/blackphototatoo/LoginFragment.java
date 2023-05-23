@@ -1,5 +1,7 @@
 package com.example.blackphototatoo;
 
+import static android.service.controls.ControlsProviderService.TAG;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,10 +32,20 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginFragment extends Fragment {
 
@@ -54,7 +66,7 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-//        System.out.println(mAuth.getCurrentUser().getEmail()+"--------------------------------------------------------------------------");
+      //  System.out.println(mAuth.getCurrentUser().getEmail()+"--------------------------------------------------------------------------");
         navController = Navigation.findNavController(view);
         botonSiguiente = view.findViewById(R.id.ingresar);
         botonCrearCuenta=view.findViewById(R.id.crearCuenta);
@@ -112,7 +124,6 @@ public class LoginFragment extends Fragment {
                         }
                     }
                 });
-
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -153,20 +164,69 @@ public class LoginFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.e("ABCD", "signInWithCredential:success");
+
+                           //verificarUsuarioEnDatabase(mAuth);
+                           verify(mAuth.getCurrentUser());
+
                             actualizarUI(mAuth.getCurrentUser());
+                            //verificarUsuarioEnDatabase(mAuth.getCurrentUser());
                         } else {
                             Log.e("ABCD", "signInWithCredential:failure",
                                     task.getException());
-
                         }
                     }
                 });
     }
 
+    private void registrarUserBBDD(FirebaseAuth mAuth) {
+
+        String uid = mAuth.getCurrentUser().getUid();
+        String name = mAuth.getCurrentUser().getDisplayName();
+        String email = mAuth.getCurrentUser().getEmail();
+        String photoUrl = mAuth.getCurrentUser().getPhotoUrl().toString();
+
+        Users newUser = new Users(photoUrl, uid, name, email);
+
+        FirebaseFirestore.getInstance().collection("usuariosPrueba").add(newUser);
+    }
+
+
     private void actualizarUI(FirebaseUser currentUser) {
         if (currentUser != null) {
             navController.navigate(R.id.discoverFragment);
         }
+    }
+    public void verify(FirebaseUser user){
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference collectionRef = firestore.collection("usuariosPrueba");
+
+        String emailToCheck = user.getEmail();
+
+        com.google.firebase.firestore.Query query = collectionRef.whereEqualTo("mail", emailToCheck);
+
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        // Existe al menos un documento en la colección donde el valor del atributo "email" es igual a "emailToCheck"
+                        // Puedes realizar acciones adicionales aquí
+                        System.out.println("-----------------------------------------------------------------------EXISTE");
+                    } else {
+                        // No existe ningún documento en la colección con el valor del atributo "email" igual a "emailToCheck"
+                        // Puedes realizar acciones adicionales aquí
+                        System.out.println("---------------------------------------------------------------------NO--EXISTE");
+                        registrarUserBBDD(mAuth);
+                    }
+                } else {
+                    // Error al obtener los datos de Firestore
+                    Exception exception = task.getException();
+
+                }
+
+            }
+        });
     }
 
 }

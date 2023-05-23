@@ -81,12 +81,21 @@ public class UploadPhotoFragment extends Fragment {
 
             }
         });
-  Button chatIAMessages = view.findViewById(R.id.buttonAiMessages);
+      Button chatIAMessages = view.findViewById(R.id.buttonAiMessages);
         chatIAMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 navController.navigate(R.id.aiChatFragment);
+
+            }
+        });
+        Button discFragment = view.findViewById(R.id.discoverButton);
+        discFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.discoverFirebaseFragment);
 
             }
         });

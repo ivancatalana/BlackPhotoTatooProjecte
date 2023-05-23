@@ -11,7 +11,7 @@ public class Publicacion {
         public String author;
         public String dateTimePost;
         public String ordenadaDateTime;
-        // public String date
+        public String nombre;
         public String authorPhotoUrl;
         public String mediaUrl;
         public String mediaType;
@@ -28,6 +28,7 @@ public class Publicacion {
             this.dateTimePost=dateTimePost;
             this.ordenadaDateTime=ordenadaDateTime;
             this.authorPhotoUrl = authorPhotoUrl;
+            this.nombre = content;
             this.mediaUrl = mediaUrl;
             this.mediaType = mediaType;
         }

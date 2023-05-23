@@ -47,7 +47,7 @@ public class SplashScreenFragment extends Fragment {
                 //Do something after 3000ms
                 accederAutomaticamente();
             }
-        }, 2000);
+        }, 200);
 
 
     }
@@ -81,6 +81,6 @@ public class SplashScreenFragment extends Fragment {
                 FirebaseUser user = mAuth.getCurrentUser();
                 actualizarUI(mAuth.getCurrentUser());
             }
-        }, 2000);
+        }, 200);
     }
 }

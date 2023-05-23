@@ -2,6 +2,7 @@ package com.example.blackphototatoo;
 
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.ContentValues.TAG;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -20,6 +21,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +37,27 @@ import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -56,20 +76,11 @@ public class EditProfileFragment extends Fragment {
     private Uri selectedImageUri;
     private View view;
     private PhotoView profileImageView;
+    private String nombreUsuario;
 
     public EditProfileFragment() {
         // Required empty public constructor
     }
-
-    // TODO: Rename and change types and number of parameters
-    public static EditProfileFragment newInstance(String param1, String param2) {
-        EditProfileFragment fragment = new EditProfileFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,14 +94,9 @@ public class EditProfileFragment extends Fragment {
         mAuth=FirebaseAuth.getInstance();
         editName= view.findViewById(R.id.button9);
         signOut= view.findViewById(R.id.buttonSignOut);
-        profileImageView = view.findViewById(R.id.imagen_perfil);
+        profileImageView = view.findViewById(R.id.friendProfileImageView);
         navController = Navigation.findNavController(view);
-        editName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup();
-            }
-        });
+
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,15 +105,23 @@ public class EditProfileFragment extends Fragment {
                         .build()).signOut();
                 FirebaseAuth.getInstance().signOut();
                 // Cierra completamente la aplicación
-                System.out.println(mAuth.getCurrentUser().getEmail());
+                //System.out.println(mAuth.getCurrentUser().getEmail());
                navController.navigate(R.id.loginFragment);
 
+            }
+        });
+
+        editName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(  mAuth.getCurrentUser().getDisplayName()+"----------____________________________________________");
+                showPopupName();
             }
         });
         view.findViewById(R.id.button20).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup();
+                showPopupPass();
             }
         });
         view.findViewById(R.id.changePhoto).setOnClickListener(new View.OnClickListener() {
@@ -121,9 +135,10 @@ public class EditProfileFragment extends Fragment {
         view.findViewById(R.id.button12).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup();
+               // showPopup();
             }
         });
+
 
                 NavController navController = Navigation.findNavController(view);
 
@@ -140,15 +155,38 @@ public class EditProfileFragment extends Fragment {
                     .into(profileImageView);
         }
     }
-    private void showPopup() {
+//    private void showPopup() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        LayoutInflater inflater = this.getLayoutInflater();
+//        View view = inflater.inflate(R.layout.modal, null);
+//        builder.setView(view);
+//        EditText editText = view.findViewById(R.id.editText);
+//        builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // Aquí puedes guardar el texto ingresado en el EditText
+//            }
+//        });
+//        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//        builder.show();
+//    }
+    private void showPopupName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.modal, null);
         builder.setView(view);
         EditText editText = view.findViewById(R.id.editText);
+
         builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                nombreUsuario = editText.getText().toString();
+                cambiarNombre();
                 // Aquí puedes guardar el texto ingresado en el EditText
             }
         });
@@ -159,6 +197,110 @@ public class EditProfileFragment extends Fragment {
             }
         });
         builder.show();
+
+    }
+    private void showPopupPass() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.password, null);
+        builder.setView(view);
+        final EditText oldpass = view.findViewById(R.id.oldPass);
+        final EditText newpass = view.findViewById(R.id.newPass);
+
+        builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Aquí puedes guardar el texto ingresado en el EditText
+                String oldp = oldpass.getText().toString().trim();
+                String newp = newpass.getText().toString().trim();
+                cambiarContrasenya(oldp,newp);
+            }
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+    private void cambiarNombre(){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(nombreUsuario)
+                .build();
+
+        mAuth.getCurrentUser().updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User name updated.");
+                            Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+        final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        final CollectionReference collectionRef = firestore.collection("usuariosPrueba");
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        com.google.firebase.firestore.Query query = collectionRef.whereEqualTo("mail", currentUser.getEmail());
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException exception) {
+                if (exception != null) {
+                    // Error al obtener los datos de Firestore
+                    System.out.println("DATABASE error ---------------------------------------__---");
+                    return;
+                }
+
+                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                    // Existe al menos un documento en la colección donde el valor del atributo "mail" es igual al correo del usuario actual
+                    for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                        String documentId = documentSnapshot.getId();
+                        System.out.println(documentSnapshot.get("name") + "----------------------------getter");
+
+                        DocumentReference documentRef = collectionRef.document(documentId);
+                        documentRef.update("name", nombreUsuario);
+                    }
+                } else {
+                    // No existe ningún documento en la colección con el valor del atributo "mail" igual al correo del usuario actual
+                    System.out.println("---------------------------------------------------------------------NO--EXISTE");
+                }
+            }
+        });
+
+    }
+    private void cambiarContrasenya(String oldp,final String newp){
+        final FirebaseUser user = mAuth.getCurrentUser();
+        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), oldp);
+        user.reauthenticate(authCredential)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        user.updatePassword(newp)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+//                                        pd.dismiss();
+                                        Toast.makeText(getContext(), "Changed Password", Toast.LENGTH_LONG).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+//                                        pd.dismiss();
+                                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+//                        pd.dismiss();
+                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_LONG).show();
+                    }
+                });
     }
     private void pujaIguardarEnFirestore(final Uri mediaUri, final FirebaseUser user ,  final Context context) {
         try {

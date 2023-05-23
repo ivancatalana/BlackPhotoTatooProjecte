@@ -19,6 +19,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.Manifest;
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Establece la orientación fija en la MainActivity
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
                 getSupportActionBar().hide();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -85,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (destination.getId() == R.id.bottom1Fragment
                         || destination.getId() == R.id.mapFragment
-                        || destination.getId() == R.id.profileFragment
                         || destination.getId() == R.id.discoverFragment
                         || destination.getId() == R.id.tatooStoreFragment
                         || destination.getId() == R.id.uploadPhotoFragment)  {

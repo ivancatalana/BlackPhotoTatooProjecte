@@ -97,7 +97,7 @@ public class CreateAccountFragment extends Fragment {
                                             }
                                         }
                                     });
-                            final DatabaseReference databaser = FirebaseDatabase.getInstance().getReference("users");
+                            final DatabaseReference databaser = FirebaseDatabase.getInstance().getReference("usuariosPrueba");
                             Query query = databaser.orderByChild("uid").equalTo(mAuth.getCurrentUser().getUid());
                             query.addValueEventListener(new ValueEventListener() {
                                 @Override
@@ -115,8 +115,9 @@ public class CreateAccountFragment extends Fragment {
                             });
 
                             profileRef.getDownloadUrl();
-                            Users u = new Users("https://firebasestorage.googleapis.com/v0/b/blackphototatoo.appspot.com/o/profileImages%2F838c756f-ab57-469d-beb0-93594c6557e4?alt=media&token=4e5f687a-9e5c-4f9b-88b1-76231dd36314", mAuth.getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
-                            FirebaseFirestore.getInstance().collection("users").add(u);
+                            System.out.println(mAuth.getCurrentUser().getDisplayName());
+                            Users u = new Users("https://firebasestorage.googleapis.com/v0/b/blackphototatoo.appspot.com/o/profileImages%2F838c756f-ab57-469d-beb0-93594c6557e4?alt=media&token=4e5f687a-9e5c-4f9b-88b1-76231dd36314", mAuth.getUid(), mAuth.getCurrentUser().getEmail(), mAuth.getCurrentUser().getEmail());
+                            FirebaseFirestore.getInstance().collection("usuariosPrueba").add(u);
                         } else {
                             Snackbar.make(requireView(), "Error: " + task.getException(), Snackbar.LENGTH_LONG).show();
 
@@ -129,7 +130,7 @@ public class CreateAccountFragment extends Fragment {
 
     private void actualizarUI(FirebaseUser currentUser) {
         if (currentUser != null) {
-            navController.navigate(R.id.action_createAccountFragment_to_loginFragment);
+            navController.navigate(R.id.discoverFragment);
         }
     }
 
