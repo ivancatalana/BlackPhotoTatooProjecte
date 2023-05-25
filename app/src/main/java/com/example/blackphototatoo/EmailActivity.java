@@ -74,11 +74,11 @@ public class EmailActivity extends AppCompatActivity {
         String userId2 = "7UhGbChcmLTZYKT3ZmrESQd9xA93";
         String conversationId = generateConversationId(userId1, userId2);
 
-        findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnSendChat).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Obtener el mensaje del campo de texto de entrada
-                EditText messageEditText = findViewById(R.id.messageEditText);
+                EditText messageEditText = findViewById(R.id.chatEditText);
                 String message = messageEditText.getText().toString();
 
                 // Crear un HashMap para almacenar los datos del mensaje

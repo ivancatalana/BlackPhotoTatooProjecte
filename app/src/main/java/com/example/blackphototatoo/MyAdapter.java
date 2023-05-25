@@ -1,14 +1,11 @@
 package com.example.blackphototatoo;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,7 +51,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.image_view);
+            imageView = itemView.findViewById(R.id.postsProfileImageView);
             textView = itemView.findViewById(R.id.rankingfoto);
         }
     }

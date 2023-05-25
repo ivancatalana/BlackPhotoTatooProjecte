@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -13,8 +15,24 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,7 +40,7 @@ import java.util.List;
  */
 public class Tabbed1CFragment extends Fragment {
     private RecyclerView recyclerView;
-
+    private List<MyEmails> listaEmails =new ArrayList<>();
     public Tabbed1CFragment() {
         // Required empty public constructor
     }
@@ -45,10 +63,10 @@ public class Tabbed1CFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = ((FragmentActivity) v.getContext()).getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.bottom1Fragment, new EmailFragment())
-                            .addToBackStack(null)
-                            .commit();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.bottom1Fragment, new EmailFragment())
+                        .addToBackStack(null)
+                        .commit();
 
 
             }
@@ -56,17 +74,62 @@ public class Tabbed1CFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+//        String timestamp = dateFormat.format(message.getTimestamp());
         List<MyEmails> myObjects = new ArrayList<>();
-        myObjects.add(new MyEmails(R.drawable.users1, "Wendy Burguer", "31-10-2023  08:57", "Thanks, that was very helpful. "));
-        myObjects.add(new MyEmails(R.drawable.users2, "James Stewart", "30-10-2023  21:27", "Hey! Awesome image! How did you do it?"));
-        myObjects.add(new MyEmails(R.drawable.users3, "Pastanaga Guy", "30-10-2023  21:20", "Pues muy bien lo estuvimos haciendo"));
-        myObjects.add(new MyEmails(R.drawable.profile_image, "Ivan Morales", "30-10-2023  18:20", "Los ipsilium meta alpha casi 1"));
-        MyAdapterEmails adapter = new MyAdapterEmails(myObjects);
-        recyclerView.setAdapter(adapter);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        db.collection("chats")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            String chatId = document.getId();
+                            // Utiliza el chatId como desees, por ejemplo, imprimirlo
+                            System.out.println("ID del chat: " + chatId);
+                        }
+                    }
+                });
+//
+//        chatsCollectionRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot querySnapshot) {
+//                myObjects.clear();  // Limpiar la lista antes de agregar nuevos elementos
+//
+//                for (QueryDocumentSnapshot chatDocument : querySnapshot) {
+//                    String chatId = chatDocument.getId();
+//                    CollectionReference messagesCollectionRef = chatDocument.getReference().collection("messages");
+//
+//                    messagesCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING)
+//                            .limit(1)
+//                            .get()
+//                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                                @Override
+//                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                                    for (QueryDocumentSnapshot messageDocument : queryDocumentSnapshots) {
+//                                        String content = messageDocument.getString("content");
+//                                        Date timestamp = messageDocument.getDate("timestamp");
+//                                        String userId = messageDocument.getString("user");
+//                                        myObjects.add(new MyEmails(R.drawable.users1, userId, timestamp.toString(), content));
+//                                    }
+//
+//                                    // Verificar si se han obtenido todos los mensajes
+//                                    if (myObjects.size() == querySnapshot.size()) {
+//                                        MyAdapterEmails adapter = new MyAdapterEmails(myObjects);
+//                                        recyclerView.setAdapter(adapter);
+//                                        System.out.println("Tamaño del array: " + myObjects.size());
+//                                    }
+//                                }
+//                            });
+//                }
+//            }
+//        });
     }
+
+
+
 }

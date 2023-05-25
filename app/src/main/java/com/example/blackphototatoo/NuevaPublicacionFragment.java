@@ -1,7 +1,9 @@
 package com.example.blackphototatoo;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +28,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -60,7 +66,7 @@ public class NuevaPublicacionFragment extends Fragment{
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             // Inflate the layout for this fragment
-            return inflater.inflate(R.layout.fragment_nueva_publicacion, container, false);
+            return inflater.inflate(R.layout.fragment_prueba_nuevo_post, container, false);
         }
 
 
@@ -92,7 +98,7 @@ public class NuevaPublicacionFragment extends Fragment{
             appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
 
         }
-//PARTE de Storage añadida
+          //PARTE de Storage añadida
 
         private void publicar() {
             String postContent = postConentEditText.getText().toString();
@@ -108,14 +114,13 @@ public class NuevaPublicacionFragment extends Fragment{
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             System.out.println(user.toString());
             System.out.println("---------------------------------------------------------");
-            System.out.println(user.getPhotoUrl().toString());
+//            System.out.println(user.getPhotoUrl().toString());
             // Obtén la fecha actual
             Date currentDate = new Date();
 
             // Formatea la fecha según los patrones definidos
             postDateAndTime = formatoPost.format(currentDate);
             dateTimeOrdenada = fechaOrdenada.format(currentDate);
-            String contentName = "Prueba contentName";
             System.out.println(postContent);
             if(user.getDisplayName()!=null){
                 postName=user.getDisplayName();
@@ -123,25 +128,9 @@ public class NuevaPublicacionFragment extends Fragment{
             else {
                 postName = user.getEmail();
             }
-            Publicacion post = new Publicacion(user.getUid(), postName,  postDateAndTime, dateTimeOrdenada, user.getPhotoUrl().toString(),postContent, mediaUrl, mediaTipo);
+            Post post = new Post(user.getUid(), postName,  postDateAndTime, dateTimeOrdenada, user.getPhotoUrl().toString(),postContent, mediaUrl, mediaTipo);
 
-          /*  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setPhotoUri(Uri.parse(mediaUrl))
-                    .build();
-
-            user.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "User profile updated.");
-                            }
-                        }
-                    });
-
-           */
-            System.out.println(post);
-            FirebaseFirestore.getInstance().collection("publications")
+            FirebaseFirestore.getInstance().collection("posts")
                     .add(post)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -154,11 +143,37 @@ public class NuevaPublicacionFragment extends Fragment{
                         }
                     });
         }
-        private void pujaIguardarEnFirestore(final String postText) { FirebaseStorage.getInstance().getReference(mediaTipo + "/" +
-                        UUID.randomUUID()) .putFile(mediaUri)
-                .continueWithTask(task -> task.getResult().getStorage().getDownloadUrl())
-                .addOnSuccessListener(url -> guardarEnFirestore(postText, url.toString()));
+    private void pujaIguardarEnFirestore(final String postText) {
+        try {
+            // Comprimir la imagen antes de subirla
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), mediaUri);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 75, baos); // Comprimir la imagen con calidad del 75%
+            byte[] imageData = baos.toByteArray();
+
+            // Subir la imagen comprimida a Firebase Storage
+            final StorageReference storageRef = FirebaseStorage.getInstance().getReference(mediaTipo + "/" + UUID.randomUUID());
+            UploadTask uploadTask = storageRef.putBytes(imageData);
+            uploadTask.continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException(); // Manejar cualquier error durante la carga de la imagen
+                }
+
+                // La imagen se ha cargado exitosamente, obtener la URL de descarga
+                return storageRef.getDownloadUrl();
+            }).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    guardarEnFirestore(postText, downloadUri.toString());
+                } else {
+                    // Manejar el error durante la obtención de la URL de descarga
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Manejar el error de compresión de imagen
         }
+    }
         private final ActivityResultLauncher<String> galeria = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             appViewModel.setMediaSeleccionado(uri, mediaTipo); });
 

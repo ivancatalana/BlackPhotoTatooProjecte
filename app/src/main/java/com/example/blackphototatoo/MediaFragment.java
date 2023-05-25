@@ -25,6 +25,7 @@ public class MediaFragment extends Fragment {
     public AppViewModel appViewModel;
     private NavController navController;
     private Post postDestino;
+    private String uidPost;
     public MediaFragment() {
 // Required empty public constructor
     }
@@ -50,6 +51,7 @@ public class MediaFragment extends Fragment {
         {
             autor.setText(post.author);
             name.setText(post.content);
+            uidPost=post.uid;
             Glide.with(requireView()).load(post.authorPhotoUrl).into(authorImage);
             postDestino = post;
             if ("video".equals(post.mediaType) || "audio".equals(post.mediaType)) {
@@ -66,8 +68,16 @@ public class MediaFragment extends Fragment {
       authorImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                appViewModel.postSeleccionado.setValue(postDestino);
-                navController.navigate(R.id.profileFriendsFragment);
+                //appViewModel.postSeleccionado.setValue(postDestino);
+                System.out.println("------------------------------------------------------uidPost:  "+ uidPost);
+                Bundle bundle = new Bundle();
+
+                //bundle.putString("nombre", post.author);
+                bundle.putString("uid",uidPost);
+                //bundle.putInt("foto", R.drawable.profile);
+
+
+                navController.navigate(R.id.profileFriendsFragment,bundle);
                 // Acción a realizar cuando se hace clic en el ImageView
                 // Por ejemplo, mostrar un mensaje o navegar a otra pantalla
             }

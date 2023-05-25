@@ -183,6 +183,10 @@
         android:name="com.example.blackphototatoo.ProfileFriendsFragment"
         android:label="fragment_profile_friends"
         tools:layout="@layout/fragment_profile_friends" />
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.blackphototatoo.ChatList"
+        android:label="ChatList" />
 
 
 </navigation>

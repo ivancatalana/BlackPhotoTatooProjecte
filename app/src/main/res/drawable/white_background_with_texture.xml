@@ -1,0 +1,11 @@
+<!-- white_background_with_texture.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/white_background" /> <!-- Shape del fondo blanco (white_background.xml) -->
+    <item>
+        <bitmap
+            android:src="@drawable/texture"
+            android:tileMode="repeat"
+        android:scaleType="centerCrop"
+        android:gravity="center" />
+    </item>
+</layer-list>

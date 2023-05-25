@@ -4,6 +4,7 @@ package com.example.blackphototatoo;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -20,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -107,6 +110,18 @@ public class EditProfileFragment extends Fragment {
                 // Cierra completamente la aplicación
                 //System.out.println(mAuth.getCurrentUser().getEmail());
                navController.navigate(R.id.loginFragment);
+                final Handler handler = new Handler(Looper.getMainLooper());
+
+        //Temporizador para actualizar la variable antes de mostrarla (Si no se muestra a 0)
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 3000ms
+                restartApplication(requireActivity());
+
+            }
+        }, 200);
 
             }
         });
@@ -155,26 +170,7 @@ public class EditProfileFragment extends Fragment {
                     .into(profileImageView);
         }
     }
-//    private void showPopup() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        LayoutInflater inflater = this.getLayoutInflater();
-//        View view = inflater.inflate(R.layout.modal, null);
-//        builder.setView(view);
-//        EditText editText = view.findViewById(R.id.editText);
-//        builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                // Aquí puedes guardar el texto ingresado en el EditText
-//            }
-//        });
-//        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//        builder.show();
-//    }
+
     private void showPopupName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
@@ -360,6 +356,34 @@ public class EditProfileFragment extends Fragment {
             e.printStackTrace();
             showToast(context,"Error al cargar y comprimir la imagen");
         }
+        final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        final CollectionReference collectionRef = firestore.collection("usuariosPrueba");
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        com.google.firebase.firestore.Query query = collectionRef.whereEqualTo("mail", currentUser.getEmail());
+
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException exception) {
+                if (exception != null) {
+                    // Error al obtener los datos de Firestore
+                    System.out.println("DATABASE error ---------------------------------------__---");
+                    return;
+                }
+
+                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                    // Existe al menos un documento en la colección donde el valor del atributo "mail" es igual al correo del usuario actual
+                    for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                        String documentId = documentSnapshot.getId();
+                        DocumentReference documentRef = collectionRef.document(documentId);
+                        documentRef.update("uidPhotoUrl", mAuth.getCurrentUser().getPhotoUrl());
+                    }
+                } else {
+                    // No existe ningún documento en la colección con el valor del atributo "mail" igual al correo del usuario actual
+                    System.out.println("---------------------------------------------------------------------NO--EXISTE");
+                }
+            }
+        });
     }
 
     private static void showToast(Context context, String message) {
@@ -375,5 +399,12 @@ public class EditProfileFragment extends Fragment {
 
             pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser(), getContext());
         }
+    }
+    public void restartApplication(Activity activity) {
+        Intent intent = activity.getBaseContext().getPackageManager().getLaunchIntentForPackage(activity.getBaseContext().getPackageName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+        activity.finish();
     }
 }

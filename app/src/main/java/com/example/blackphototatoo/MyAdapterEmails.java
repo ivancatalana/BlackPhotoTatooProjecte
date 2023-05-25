@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class MyAdapterEmails extends RecyclerView.Adapter<MyAdapterEmails.MyViewHolder> {
@@ -30,7 +32,13 @@ public class MyAdapterEmails extends RecyclerView.Adapter<MyAdapterEmails.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MyEmails myObject = myEmails.get(position);
-        holder.imageView.setImageResource(myObject.getImageResource());
+        // Cargar la imagen usando Glide en el ImageView del holder
+        Glide.with(holder.itemView.getContext())
+                .load(myObject.getImageResource())
+                .circleCrop()
+                .into(holder.imageView);
+
+        // Establecer los demás datos en los elementos del holder
         holder.name.setText(myObject.getName());
         holder.fecha.setText(myObject.getFecha());
         holder.textView.setText(myObject.getText());
@@ -59,10 +67,10 @@ public class MyAdapterEmails extends RecyclerView.Adapter<MyAdapterEmails.MyView
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.image_view);
+            imageView = itemView.findViewById(R.id.postsProfileImageView);
             textView = itemView.findViewById(R.id.rankingfoto);
-            fecha = itemView.findViewById(R.id.hora_creacion);
-            name = itemView.findViewById(R.id.nombre_imagen);
+            fecha = itemView.findViewById(R.id.postsProfileDate);
+            name = itemView.findViewById(R.id.postsProfileName);
 
 
         }

@@ -37,10 +37,10 @@ public class MyEmailsRecyclerViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         List<MyEmails> myObjects = new ArrayList<>();
         navController = Navigation.findNavController(view);
-        myObjects.add(new MyEmails(R.drawable.users1, "Wendy Burguer", "31-10-2023  08:57", "Thanks, that was very helpful. "));
-        myObjects.add(new MyEmails(R.drawable.users2, "James Stewart", "30-10-2023  21:27", "Hey! Awesome image! How did you do it?"));
-        myObjects.add(new MyEmails(R.drawable.users3, "Pastanaga Guy", "30-10-2023  21:20", "Pues muy bien lo estuvimos haciendo"));
-        myObjects.add(new MyEmails(R.drawable.profile_image, "Ivan Morales", "30-10-2023  18:20", "Los ipsilium meta alpha casi 1"));
+//        myObjects.add(new MyEmails(R.drawable.users1, "Wendy Burguer", "31-10-2023  08:57", "Thanks, that was very helpful. "));
+//        myObjects.add(new MyEmails(R.drawable.users2, "James Stewart", "30-10-2023  21:27", "Hey! Awesome image! How did you do it?"));
+//        myObjects.add(new MyEmails(R.drawable.users3, "Pastanaga Guy", "30-10-2023  21:20", "Pues muy bien lo estuvimos haciendo"));
+//        myObjects.add(new MyEmails(R.drawable.profile_image, "Ivan Morales", "30-10-2023  18:20", "Los ipsilium meta alpha casi 1"));
         MyAdapterEmails adapter = new MyAdapterEmails(myObjects);
         recyclerView.setAdapter(adapter);
     }

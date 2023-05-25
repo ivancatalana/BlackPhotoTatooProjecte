@@ -18,7 +18,7 @@
         app:srcCompat="@drawable/gradient" />
 
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/postsProfileImageView"
         android:layout_width="111dp"
         android:layout_height="101dp"
         android:layout_marginStart="4dp"
@@ -39,12 +39,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.916"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
-        app:layout_constraintTop_toBottomOf="@+id/hora_creacion"
+        app:layout_constraintStart_toEndOf="@+id/postsProfileImageView"
+        app:layout_constraintTop_toBottomOf="@+id/postsProfileDate"
         app:layout_constraintVertical_bias="0.105" />
 
     <TextView
-        android:id="@+id/hora_creacion"
+        android:id="@+id/postsProfileDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -54,10 +54,10 @@
         android:textSize="9sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView28"
-        app:layout_constraintTop_toBottomOf="@+id/nombre_imagen" />
+        app:layout_constraintTop_toBottomOf="@+id/postsProfileName" />
 
     <TextView
-        android:id="@+id/nombre_imagen"
+        android:id="@+id/postsProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -79,7 +79,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView31"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.443"
-        app:layout_constraintStart_toEndOf="@+id/image_view" />
+        app:layout_constraintStart_toEndOf="@+id/postsProfileImageView" />
 
     <TextView
         android:id="@+id/textView20"
@@ -90,7 +90,7 @@
         android:fontFamily="@font/robotoregular"
         android:text="Image Name: "
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
+        app:layout_constraintStart_toEndOf="@+id/postsProfileImageView"
         app:layout_constraintTop_toTopOf="@+id/imageView31" />
 
     <TextView
@@ -101,7 +101,7 @@
         android:fontFamily="@font/robotoregular"
         android:text="Created: "
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
+        app:layout_constraintStart_toEndOf="@+id/postsProfileImageView"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
     <TextView
@@ -112,7 +112,7 @@
         android:fontFamily="@font/robotoregular"
         android:text="Ranking: "
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
+        app:layout_constraintStart_toEndOf="@+id/postsProfileImageView"
         app:layout_constraintTop_toBottomOf="@+id/textView28" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

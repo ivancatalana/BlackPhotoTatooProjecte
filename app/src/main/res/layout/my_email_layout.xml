@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/postsProfileImageView"
         android:layout_width="64dp"
         android:layout_height="61dp"
         android:layout_marginStart="-5dp"
@@ -36,10 +36,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hora_creacion" />
+        app:layout_constraintTop_toBottomOf="@+id/postsProfileDate" />
 
     <TextView
-        android:id="@+id/hora_creacion"
+        android:id="@+id/postsProfileDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -48,10 +48,10 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nombre_imagen" />
+        app:layout_constraintTop_toBottomOf="@+id/postsProfileName" />
 
     <TextView
-        android:id="@+id/nombre_imagen"
+        android:id="@+id/postsProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

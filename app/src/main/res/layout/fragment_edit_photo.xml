@@ -5,6 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/guardarButton"
+        android:layout_width="113dp"
+        android:layout_height="133dp"
+        android:layout_marginLeft="-35dp"
+        android:layout_marginTop="-50dp"
+        android:background="#00000000"
+        android:text="↶"
+        android:textColor="#050505"
+        android:textSize="50sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/photo_image_view"
 
@@ -66,9 +79,53 @@
         android:src="@drawable/crop_button"
         app:layout_constraintBottom_toBottomOf="@+id/photo_image_view"
         app:layout_constraintEnd_toEndOf="@+id/photo_image_view"
-        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.502" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="149dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/buttonfilter1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bordes_redondos"
+            android:text="filter1"
+            android:textColor="#433814"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/buttonfilter2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bordes_redondos"
+            android:text="filter2"
+            android:textColor="#433814"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/button26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bordes_redondos"
+            android:text="filter3"
+            android:textColor="#433814"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/button27"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bordes_redondos"
+            android:text="filter4"
+            android:textColor="#433814"
+            android:textSize="12sp" />
+    </TableRow>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

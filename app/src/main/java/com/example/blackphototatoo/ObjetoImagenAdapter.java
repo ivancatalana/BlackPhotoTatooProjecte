@@ -59,10 +59,10 @@ public class ObjetoImagenAdapter extends RecyclerView.Adapter<ObjetoImagenAdapte
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.image_view);
+            imageView = itemView.findViewById(R.id.postsProfileImageView);
             ranking = itemView.findViewById(R.id.rankingfoto);
-            fecha = itemView.findViewById(R.id.hora_creacion);
-            name = itemView.findViewById(R.id.nombre_imagen);
+            fecha = itemView.findViewById(R.id.postsProfileDate);
+            name = itemView.findViewById(R.id.postsProfileName);
 
 
         }

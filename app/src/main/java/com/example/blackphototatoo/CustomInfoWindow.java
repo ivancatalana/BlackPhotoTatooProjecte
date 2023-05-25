@@ -2,8 +2,6 @@ package com.example.blackphototatoo;
 
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.infowindow.InfoWindow;
@@ -16,7 +14,7 @@ public class CustomInfoWindow extends InfoWindow {
         super(layoutResId, mapView);
 
         // encuentra la vista de ImageView en tu diseño personalizado
-        mImageView = (ImageView) mView.findViewById(R.id.image_view);
+        mImageView = (ImageView) mView.findViewById(R.id.postsProfileImageView);
     }
 
     @Override

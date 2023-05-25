@@ -2,18 +2,13 @@ package com.example.blackphototatoo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.blackphototatoo.databinding.ActivityMapBinding;
@@ -160,7 +155,7 @@ public class MapActivity extends AppCompatActivity {
 
         public CustomMarkerInfoWindow(MapView mapView) {
             super(R.layout.custom_marker_info_window, mapView);
-            imageView = (ImageView) mView.findViewById(R.id.image_view);
+            imageView = (ImageView) mView.findViewById(R.id.postsProfileImageView);
         }
 
         @Override

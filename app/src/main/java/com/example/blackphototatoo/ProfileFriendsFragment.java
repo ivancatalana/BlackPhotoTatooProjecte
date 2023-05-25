@@ -17,33 +17,29 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class ProfileFriendsFragment extends Fragment {
     String photoOK = null;
-    ImageView postPhotoImageView;
+    private ImageView friendPhotoImageView;
     TextView displayNameTextView, emailTextView;
     NavController navController;
+    private Button emailButton;
     MainActivity mainActivity;
     public AppViewModel appViewModel;
     String uidPostProfile;
@@ -51,96 +47,59 @@ public class ProfileFriendsFragment extends Fragment {
     int numberOfPosts;
     RecyclerView postsRecyclerView;
     private Parcelable recyclerViewState;
-
+    private  String photoUrl;
+    private  String name;
     public ProfileFriendsFragment() {
     }
 
-    public static ProfileFriendsFragment newInstance() {
-        return new ProfileFriendsFragment();
-    }
-
-    public ProfileFriendsFragment setPostProfile(int photoId, String displayName, String email) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("photoId", photoId);
-        bundle.putString("displayName", displayName);
-        bundle.putString("email", email);
-        setArguments(bundle);
-        return this;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //////    //Codigo para que no se bloquee el recyclerview al cerrar app o bloquear pantalla
 
+        //Recibimos el uid desde el bundle
+        Bundle bundle = getArguments();
+        if (bundle != null) uidPostProfile = bundle.getString("uid");
+
+        //////    //Codigo para que no se bloquee el recyclerview al cerrar app o bloquear pantalla
         View view = inflater.inflate(R.layout.fragment_profile_friends, container, false);
         // Find the RecyclerView in the layout
         RecyclerView recyclerView = view.findViewById(R.id.recyclerProfile);
         // Set the layout manager
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        postPhotoImageView = view.findViewById(R.id.friendProfileImageView);
+        friendPhotoImageView = view.findViewById(R.id.friendProfileImageView);
+        emailButton = view.findViewById(R.id.messageButton);
         displayNameTextView = view.findViewById(R.id.nameProfile);
         contadorPosts = view.findViewById(R.id.publishedImages);
-        //////  // Codigo para que no se bloquee el recyclerview al cerrar app o bloquear pantalla
-//
-//        Bundle args = getArguments();
-//        if (args != null) {
-//            postPhotoImageView = view.findViewById(R.id.friendProfileImageView);
-//            displayNameTextView = view.findViewById(R.id.nameProfile);
-//            contadorPosts = view.findViewById(R.id.publisheImages);
-//            //emailTextView = view.findViewById(R.id.emailTextView);
-//            displayNameTextView.setText(args.getString("nombre"));
-////            emailTextView.setText(args.getString("email"));
-//            uidPostProfile = args.getString("email");
-//            //
-//            //     postPhotoImageView.setImageResource(args.getInt("foto"));
-//
-//        }
-//
-//        // ...
-
-        // Inicializar el objeto AppViewModel
-        appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
-        appViewModel.postSeleccionado.observe(getViewLifecycleOwner(), post ->
-        {
-           uidPostProfile=post.uid;
-          // displayNameTextView.setText(post.author);
-           //Glide.with(requireView()).load(post.authorPhotoUrl).circleCrop().into(postPhotoImageView);
-
-        });
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        DocumentReference userRef = db.collection("users").document(uidPostProfile);
-//
-
-
-        // ------------------------------------- Intento de recibir la ultima foto de los usuarios
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query query = db.collection("users").whereEqualTo("uid", uidPostProfile);
-
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+////--------------------------------------Nos conectamos a la coleccion de usuarios con las imagenes y nombres de usuario actualizados
+        final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        final CollectionReference collectionRef = firestore.collection("usuariosPrueba");
+        com.google.firebase.firestore.Query query = collectionRef.whereEqualTo("uid", uidPostProfile);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+            public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException exception) {
+                if (exception != null) {
+                    // Error al obtener los datos de Firestore
+                    System.out.println("DATABASE error ---------------------------------------__---");
+                    return;
+                }
+                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                    // Existe al menos un documento en la colección donde el valor del atributo "mail" es igual al correo del usuario actual
+                    for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                        String documentId = documentSnapshot.getId();
+                        System.out.println(documentSnapshot.get("name") + "----------------------------getter");
                         // Accede a los datos del documento
-                        String name = document.getString("name");
-                        String photoUrl = document.getString("uidPhotoUrl");
+                        name = documentSnapshot.getString("name");
+                        photoUrl = documentSnapshot.getString("uidPhotoUrl");
                         // Realiza las acciones necesarias con los datos obtenidos
                         displayNameTextView.setText(name);
-                        Glide.with(requireView()).load(photoUrl).circleCrop().into(postPhotoImageView);
-                        System.out.println(name+"--------------------------------------------------Name");
-                        System.out.println(photoUrl+"-----------------------------------------------------------------Photo");
-
-
+                        Glide.with(requireView()).load(photoUrl).circleCrop().into(friendPhotoImageView);
                     }
                 } else {
-                    // Ocurrió un error al obtener los datos
-                    Exception e = task.getException();
-                    // Maneja el error adecuadamente
+                    // No existe ningún documento en la colección con el valor del atributo "mail" igual al correo del usuario actual
+                    System.out.println("---------------------------------------------------------------------NO--EXISTE");
                 }
             }
         });
-
         return view;
     }
 
@@ -156,26 +115,52 @@ public class ProfileFriendsFragment extends Fragment {
             try {
 
                 postsRecyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
-            }
-            catch ( NullPointerException n ){
+            } catch (NullPointerException n) {
                 System.out.println("error");
             }
         }
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        FirebaseFirestore.getInstance()
-                .collection("posts")
-                .whereEqualTo("uid", uidPostProfile)
-                .orderBy("ordenadaDateTime", Query.Direction.DESCENDING).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot querySnapshot = task.getResult();
-                        System.out.println("-------------------------------querySnapshot.size()     -- " + querySnapshot.size());
-                        numberOfPosts = (int) querySnapshot.size();
+                Bundle arguments = new Bundle();
+                arguments.putString("senderUid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                arguments.putString("receiverUid", uidPostProfile);
+                arguments.putString("photoURL", photoUrl );
+                arguments.putString("name", name );
+                 navController.navigate(R.id.emailFragment,arguments);
+            }
+        });
+//
+//        postsRecyclerView = view.findViewById(R.id.recyclerProfile);
+//        Query query = FirebaseFirestore.getInstance().collection("posts").orderBy("ordenadaDateTime", Query.Direction.DESCENDING).limit(50);
+//
+//        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
+//                .setQuery(query, Post.class)
+//                .setLifecycleOwner(this)
+//                .build();
+//
+//        postsRecyclerView.setAdapter(new PostsAdapter(options));
+//
+//        appViewModel = new
+//                ViewModelProvider(requireActivity()).get(AppViewModel.class);
+//
+//
+//        FirebaseFirestore.getInstance()
+//                .collection("posts")
+//                .whereEqualTo("uid", uidPostProfile)
+//                .orderBy("ordenadaDateTime", Query.Direction.DESCENDING).get()
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        QuerySnapshot querySnapshot = task.getResult();
+//                        System.out.println("-------------------------------querySnapshot.size()     -- " + querySnapshot.size());
+//                        numberOfPosts = (int) querySnapshot.size();
+//
+//                    }
+//                });
 
-                    }
-                });
         postsRecyclerView = view.findViewById(R.id.recyclerProfile);
-        // System.out.println(uidPostProfile + " EL uid del post ------------------------------------------------------------");
+
         // Consulta con indice compuesto que obliga a estar  habilitada en firebase
         Query query = FirebaseFirestore.getInstance().collection("posts").whereEqualTo("uid", uidPostProfile).orderBy("ordenadaDateTime", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
@@ -195,7 +180,6 @@ public class ProfileFriendsFragment extends Fragment {
             public void run() {
                 //Do something after 3000ms
                 contadorPosts.setText("" + numberOfPosts);
-
             }
         }, 200);
 
@@ -216,7 +200,7 @@ public class ProfileFriendsFragment extends Fragment {
         @NonNull
         @Override
         public ProfileFriendsFragment.PostsAdapter.PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ProfileFriendsFragment.PostsAdapter.PostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_post, parent, false));
+            return new ProfileFriendsFragment.PostsAdapter.PostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.objeto_imagen_layout, parent, false));
         }
 
 
@@ -224,81 +208,22 @@ public class ProfileFriendsFragment extends Fragment {
 
         protected void onBindViewHolder(@NonNull ProfileFriendsFragment.PostsAdapter.PostViewHolder holder, int position, @NonNull final Post post) {
 
-
-            final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            //FirebaseAuth.getInstance();
-            System.out.println("------------" + post.authorPhotoUrl);
-
-            if (post.authorPhotoUrl.contains("http") || post.authorPhotoUrl.contains("content")) {
-                photoOK = post.authorPhotoUrl;
-            }
-            if (photoOK == null)
-                Glide.with(requireView()).load(getResources().getDrawable(R.drawable.profile)).circleCrop().into(holder.authorPhotoImageView);
-            else
-                Glide.with(getContext()).load(photoOK).circleCrop().into(postPhotoImageView);
-
-
-            if (post.authorPhotoUrl != null) {
-                Glide.with(getContext()).load(post.authorPhotoUrl).circleCrop().into(holder.authorPhotoImageView);
-            }
-            if (post.author!=null) holder.authorTextView.setText(post.author);
-            else{
-                holder.authorTextView.setText("");
-            }
+            Glide.with(getContext()).load(post.mediaUrl).circleCrop().into(holder.mediaImageView);
             holder.dateTimeTextView.setText(post.dateTimePost);
-
-            holder.contentTextView.setText(post.content);
-
-            //   holder.contentTextView.setText(post.dateTimePost);
-            // Gestion de likes
-            final String postKey = getSnapshots().getSnapshot(position).getId();
-            if (post.likes.containsKey(uid))
-                holder.likeImageView.setImageResource(R.drawable.like_on);
-            else holder.likeImageView.setImageResource(R.drawable.like_off);
             holder.numLikesTextView.setText(String.valueOf(post.likes.size()));
-            holder.likeImageView.setOnClickListener(view -> {
-                FirebaseFirestore.getInstance().collection("posts")
-                        .document(postKey)
-                        .update("likes." + uid, post.likes.containsKey(uid) ? FieldValue.delete() : true);
-            });
-
-            //Gestion de borrados
-            holder.deleteImageView.setVisibility(View.GONE);
-
-
-            // Miniatura de media
-            if (post.mediaUrl != null) {
-                holder.mediaImageView.setVisibility(View.VISIBLE);
-                if ("audio".equals(post.mediaType)) {
-                    Glide.with(requireView()).load(R.drawable.audio).centerCrop().into(holder.mediaImageView);
-                } else {
-                    Glide.with(requireView()).load(post.mediaUrl).centerCrop().into(holder.mediaImageView);
-                }
-                holder.mediaImageView.setOnClickListener(view -> {
-                    appViewModel.postSeleccionado.setValue(post);
-                    navController.navigate(R.id.mediaFragment);
-                });
-            } else {
-                holder.mediaImageView.setVisibility(View.GONE);
-            }
+            holder.namePostsProfile.setText(post.content);
         }
-
-
         class PostViewHolder extends RecyclerView.ViewHolder {
-            ImageView authorPhotoImageView, likeImageView, deleteImageView, mediaImageView;
-            TextView authorTextView, dateTimeTextView, contentTextView, numLikesTextView;
+            ImageView  mediaImageView;
+            TextView dateTimeTextView, numLikesTextView , namePostsProfile;
 
             PostViewHolder(@NonNull View itemView) {
                 super(itemView);
                 //   postPhotoImageView=itemView.findViewById(R.id.photoImageView);
-                authorPhotoImageView = itemView.findViewById(R.id.photoImageView);
-                likeImageView = itemView.findViewById(R.id.likeImageView);
-                mediaImageView = itemView.findViewById(R.id.mediaImage);
-                dateTimeTextView = itemView.findViewById(R.id.dateTimeTextView);
-                authorTextView = itemView.findViewById(R.id.authorTextView);
-                contentTextView = itemView.findViewById(R.id.contentTextView);
-                numLikesTextView = itemView.findViewById(R.id.numLikesTextView);
-                deleteImageView = itemView.findViewById(R.id.deleteImageView);
+                mediaImageView = itemView.findViewById(R.id.postsProfileImageView);
+                dateTimeTextView = itemView.findViewById(R.id.postsProfileDate);
+                numLikesTextView = itemView.findViewById(R.id.rankingfoto);
+                namePostsProfile = itemView.findViewById(R.id.postsProfileName);
 
             }
         }
@@ -311,6 +236,7 @@ public class ProfileFriendsFragment extends Fragment {
         recyclerViewState = postsRecyclerView.getLayoutManager().onSaveInstanceState();
         outState.putParcelable("recycler_state", recyclerViewState);
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -318,7 +244,4 @@ public class ProfileFriendsFragment extends Fragment {
             postsRecyclerView.getLayoutManager().removeAllViews(); // Limpia el RecyclerView
         }
     }
-
-
-
 }

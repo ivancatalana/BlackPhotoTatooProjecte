@@ -24,6 +24,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
+
 public class UploadPhotoFragment extends Fragment {
 
     private static final int REQUEST_CODE_SELECT_PHOTO = 1;
@@ -78,6 +80,16 @@ public class UploadPhotoFragment extends Fragment {
             public void onClick(View v) {
 
                 navController.navigate(R.id.editor_ai_Fragment);
+
+            }
+        });
+
+        Button chatList = view.findViewById(R.id.chatButtonPrueba);
+        chatList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.chatListFragment);
 
             }
         });
@@ -144,23 +156,26 @@ public class UploadPhotoFragment extends Fragment {
 
         if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.getData();
+            ImageView selectedPhotoThumbnail = view.findViewById(R.id.selected_photo_thumbnail);
 
             // Obtener la miniatura de la imagen seleccionada
             Bitmap thumbnail = null;
             try {
-                thumbnail = MediaStore.Images.Thumbnails.getThumbnail(
-                        getActivity().getContentResolver(),
-                        Long.parseLong(selectedImageUri.getLastPathSegment()),
-                        MediaStore.Images.Thumbnails.MINI_KIND,
-                        null
-                );
+//                thumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+//                        getActivity().getContentResolver(),
+//                        Long.parseLong(selectedImageUri.getLastPathSegment()),
+//                        MediaStore.Images.Thumbnails.MINI_KIND,
+//                        null
+ //               );
+                Glide.with(requireContext())
+                        .load(selectedImageUri)
+                        .into(selectedPhotoThumbnail);
             } catch (Exception e) {
                 Log.e(TAG, "Error al cargar la miniatura de la imagen", e);
             }
 
             // Mostrar la miniatura en la ImageView
-            ImageView selectedPhotoThumbnail = view.findViewById(R.id.selected_photo_thumbnail);
-            selectedPhotoThumbnail.setImageBitmap(thumbnail);
+           // selectedPhotoThumbnail.setImageBitmap(thumbnail);
         }
     }
 

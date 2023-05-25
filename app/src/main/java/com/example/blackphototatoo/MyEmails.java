@@ -1,13 +1,13 @@
 package com.example.blackphototatoo;
 
 public class MyEmails {
-    private int imageResource;
+    private String imageResource;
     private String text;
     private String fecha;
     private String name;
 
 
-    public MyEmails(int imageResource, String name,String fecha, String text) {
+    public MyEmails(String imageResource, String name,String fecha, String text) {
         this.imageResource = imageResource;
         this.text = text;
         this.fecha=fecha;
@@ -15,7 +15,7 @@ public class MyEmails {
 
     }
 
-    public int getImageResource() {
+    public String getImageResource() {
         return imageResource;
     }
 
@@ -29,4 +29,6 @@ public class MyEmails {
     public String getName() {
         return name;
     }
+
+
 }
