@@ -178,7 +178,8 @@ public class NuevaPublicacionFragment extends Fragment{
             appViewModel.setMediaSeleccionado(uri, mediaTipo); });
 
         private void seleccionarImagen() {
-            mediaTipo = "image"; galeria.launch("image/*");
+            mediaTipo = "image";
+            galeria.launch("image/*");
         }
 
 

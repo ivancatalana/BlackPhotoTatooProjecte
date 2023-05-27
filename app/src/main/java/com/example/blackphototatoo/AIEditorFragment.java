@@ -89,6 +89,7 @@ public class AIEditorFragment extends Fragment {
     private String serverImageFilePath;
     private String prompt;
     private String rutaOrigenImagen;
+    private String  imageUrl;
     private Uri imageUriGuardada; // Declarar la variable a nivel de clase
     // Declaración del Handler
     private Handler handler = new Handler();
@@ -367,7 +368,7 @@ public class AIEditorFragment extends Fragment {
                     System.out.println("Respuesta del servidor: " + responseData);
                     try {
                         JSONObject jsonObject = new JSONObject(responseData);
-                        String imageUrl = jsonObject.getString("link");
+                        imageUrl = jsonObject.getString("link");
 
                         guardarRegistroEdiciones(promptText,uri,imageUrl);
 
@@ -496,15 +497,19 @@ public class AIEditorFragment extends Fragment {
             // Obtener la ruta del archivo de la URI
             String filePath = getImagePathFromUri(imageUriGuardada);
 
-            // Cargar la imagen como miniatura respetando su aspecto original
-            int targetWidth = imageView.getWidth();
-            int targetHeight = imageView.getHeight();
-            Bitmap bitmap2 = decodeSampledBitmapFromFile(filePath, targetWidth, targetHeight);
+//            // Cargar la imagen como miniatura respetando su aspecto original
+//            int targetWidth = imageView.getWidth();
+//            int targetHeight = imageView.getHeight();
+//            Bitmap bitmap2 = decodeSampledBitmapFromFile(filePath, targetWidth, targetHeight);
+//
+//            // Mostrar la imagen corregida en el ImageView
+//            imageView.setImageBitmap(bitmap2);
+//            imageView.setTag(bitmap2.toString());
+//            uploadButton.setEnabled(true);
+            Glide.with(requireContext())
+                    .load(imageUrl)
+                    .into(imageView);
 
-            // Mostrar la imagen corregida en el ImageView
-            imageView.setImageBitmap(bitmap2);
-            imageView.setTag(imageUri.toString());
-            uploadButton.setEnabled(true);
         }
     }
 

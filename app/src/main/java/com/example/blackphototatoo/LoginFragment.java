@@ -201,7 +201,6 @@ public class LoginFragment extends Fragment {
         CollectionReference collectionRef = firestore.collection("usuariosPrueba");
 
         String emailToCheck = user.getEmail();
-
         com.google.firebase.firestore.Query query = collectionRef.whereEqualTo("mail", emailToCheck);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

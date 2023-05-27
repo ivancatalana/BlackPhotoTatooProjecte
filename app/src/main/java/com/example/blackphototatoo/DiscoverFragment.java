@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,9 +52,7 @@ public class DiscoverFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
 // Evita volver atras
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
@@ -62,10 +61,7 @@ public class DiscoverFragment extends Fragment {
                 Log.d("BACKBUTTON", "Back button clicks");
             }
         };
-
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-//
-
     }
 
 
@@ -135,16 +131,10 @@ public class DiscoverFragment extends Fragment {
         protected void onBindViewHolder(@NonNull PostsAdapter.PostViewHolder holder, int position, @NonNull final Post post) {
 
             Glide.with(getContext()).load(post.authorPhotoUrl).circleCrop().into(holder.authorPhotoImageView);
-            //   }
-            //  else
-            //  Glide.with(requireView()).load(getResources().getDrawable(R.drawable.profile)).circleCrop().into(holder.authorPhotoImageView);
-
             holder.authorTextView.setText(post.author);
             holder.dateTimeTextView.setText(post.dateTimePost);
-
             holder.contentTextView.setText(post.content);
 
-            //   holder.contentTextView.setText(post.dateTimePost);
             // Gestion de likes
             final String postKey = getSnapshots().getSnapshot(position).getId();
             final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -157,38 +147,22 @@ public class DiscoverFragment extends Fragment {
             });
             holder.authorPhotoImageView.setOnClickListener(view -> {
                 appViewModel.postSeleccionado.setValue(post);
-                //
-                //
-                //PostProfileFragment postProfileFragment = PostProfileFragment.newInstance().setPostProfile(R.drawable.profile,post.author,post.uid);
+
                 Bundle bundle = new Bundle();
-
                 bundle.putString("nombre", post.author);
-                bundle.putString("email", post.uid);
-                bundle.putInt("foto", R.drawable.profile);
+                bundle.putString("uid", post.uid);
 
-/*
                 if (post.uid.equals(uid)){
-                    navController.navigate(R.id.nameProfile);
-               }
+                    BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_view);
+                    bottomNavigationView.setSelectedItemId(R.id.bottom1Fragment);               }
 
- */
-                /*
                 else{
-                    navController.navigate(R.id.postProfileFragment,bundle);
-
+                    navController.navigate(R.id.profileFriendsFragment,bundle);
                 }
-
-           */
-
-
-
-
             });
             holder.contentTextView.setOnClickListener(view -> {
                 appViewModel.postSeleccionado.setValue(post);
-                //
-                //
-                //PostProfileFragment postProfileFragment = PostProfileFragment.newInstance().setPostProfile(R.drawable.profile,post.author,post.uid);
+
                 Bundle bundle = new Bundle();
                 System.out.println(post.content+"  ");
 
@@ -196,17 +170,12 @@ public class DiscoverFragment extends Fragment {
                 bundle.putString("time",post.dateTimePost);
                 bundle.putString("contenido", post.content);
                 bundle.putString("foto", post.authorPhotoUrl);
-                if (post.mediaUrl != null)    bundle.putString("fotoMedia", post.mediaUrl);
+                if (post.mediaUrl != null) bundle.putString("fotoMedia", post.mediaUrl);
 
 
                 //Navegamos al postView para ver los comentarios
                 navController.navigate(R.id.postViewFragment,bundle);
-
-
-
             });
-
-
 
             // Miniatura de media
             if (post.mediaUrl != null) {
@@ -218,8 +187,6 @@ public class DiscoverFragment extends Fragment {
                 });
             } else { holder.mediaImageView.setVisibility(View.GONE);
             }
-
-
         }
 
         class PostViewHolder extends RecyclerView.ViewHolder {
@@ -228,19 +195,15 @@ public class DiscoverFragment extends Fragment {
 
             PostViewHolder(@NonNull View itemView) {
                 super(itemView);
-                authorPhotoImageView =
-                        itemView.findViewById(R.id.photoImageView);
+                authorPhotoImageView = itemView.findViewById(R.id.photoImageView);
                 likeImageView = itemView.findViewById(R.id.likeImageView);
                 mediaImageView = itemView.findViewById(R.id.mediaImage);
                 dateTimeTextView =  itemView.findViewById(R.id.dateTimeTextView);
                 authorTextView = itemView.findViewById(R.id.authorTextView);
                 contentTextView = itemView.findViewById(R.id.contentTextView);
                 numLikesTextView = itemView.findViewById(R.id.numLikesTextView);
-
             }
         }
-
-
     }
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

@@ -15,6 +15,7 @@ import java.util.List;
 
 public class MyAdapterEmails extends RecyclerView.Adapter<MyAdapterEmails.MyViewHolder> {
     private List<MyEmails> myEmails;
+    private OnItemClickListener itemClickListener;
 
 
     public MyAdapterEmails(List<MyEmails> myEmails) {
@@ -42,16 +43,28 @@ public class MyAdapterEmails extends RecyclerView.Adapter<MyAdapterEmails.MyView
         holder.name.setText(myObject.getName());
         holder.fecha.setText(myObject.getFecha());
         holder.textView.setText(myObject.getText());
+
+        // Configurar el click listener en el ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), EmailActivity.class);
-                v.getContext().startActivity(intent);
+                if (itemClickListener != null) {
+                    int position = holder.getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        MyEmails email = myEmails.get(position);
+                        itemClickListener.onItemClick(email);
+                    }
+                }
             }
         });
     }
 
-
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        itemClickListener = listener;
+    }
+    public interface OnItemClickListener {
+        void onItemClick(MyEmails email);
+    }
 
 
     @Override

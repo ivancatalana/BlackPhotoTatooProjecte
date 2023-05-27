@@ -1,57 +1,77 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp">
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/messageRecyclerView"
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/headerTextView"
             android:layout_width="match_parent"
-            android:layout_height="559dp"
-            app:layout_constraintBottom_toTopOf="@+id/chatEditText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/chatEditText"
-            android:layout_width="248dp"
-            android:layout_height="37dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/borde"
+            android:layout_height="wrap_content"
+            android:text="Nombre del chat"
+            android:textSize="14sp"
+            android:fontFamily="@font/rocksalt"
+            android:padding="8dp"
             android:gravity="center"
-            android:hint="Prompt"
-            android:imeOptions="actionNone"
-            android:inputType="textMultiLine"
-            android:maxLines="5"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSendChat"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/messageRecyclerView"
-            tools:textColorHint="@color/material_dynamic_neutral50" />
+            android:background="@color/white" />
 
-        <ImageButton
-            android:id="@+id/btnSendChat"
-            android:layout_width="48dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_send"
-            app:layout_constraintBottom_toBottomOf="@+id/chatEditText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/chatEditText" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messageRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/chatEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+
+    <EditText
+        android:id="@+id/chatEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/borde"
+        android:gravity="center"
+        android:hint="Prompt"
+        android:imeOptions="actionNone"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:textColor="@color/black"
+        app:layout_constraintHorizontal_bias="1.0"
+        tools:textColorHint="@color/material_dynamic_neutral50"
+        app:layout_constraintBottom_toTopOf="@+id/btnSendChat"
+        app:layout_constraintEnd_toStartOf="@+id/btnSendChat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageRecyclerView"/>
+
+    <ImageButton
+        android:id="@+id/btnSendChat"
+        android:layout_width="48dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_send"
+        app:layout_constraintBottom_toBottomOf="@+id/chatEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chatEditText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.core.widget.NestedScrollView>

@@ -55,7 +55,7 @@ public class EmailFragment extends Fragment {
     private RecyclerView messageRecyclerView;
     private MessageAdapter messageAdapter;
     private List<ChatMessage> messageList;
-
+    private boolean isSender;
     private String senderUid;
     private String receiverUid;
     private String conversationId;
@@ -72,12 +72,13 @@ public class EmailFragment extends Fragment {
             senderUid = arguments.getString("senderUid");
             receiverUid = arguments.getString("receiverUid");
             nameReceiver = arguments.getString("name");
-            photoUrl = arguments.getString("photoUrl");
+            photoUrl = arguments.getString("photoURL");
         }
 
         // Crear la ID de conversación combinando los IDs de los usuarios
         conversationId = generateConversationId(senderUid, receiverUid);
 
+        System.out.println("----------------------------------------------------------------photo"+ photoUrl+"                   ------------ -- "+nameReceiver);
         // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
 
@@ -86,6 +87,7 @@ public class EmailFragment extends Fragment {
 
         // Resto del código del fragmento...
     }
+
     @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
@@ -94,6 +96,8 @@ public class EmailFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        TextView headerTextView = view.findViewById(R.id.headerTextView);
+        headerTextView.setText(nameReceiver);
 
         messageList = new ArrayList<>();
         messageAdapter = new MessageAdapter(messageList);
@@ -111,9 +115,10 @@ public class EmailFragment extends Fragment {
             public void onClick(View view) {
                 // Obtener el mensaje del campo de texto de entrada
 
-                String message =chatSend.getText().toString();
-                        //messageEditText.getText().toString();
 
+                String message = chatSend.getText().toString();
+                //messageEditText.getText().toString();
+                if(!message.isEmpty()){
                 // Crear un HashMap para almacenar los datos del mensaje
                 Map<String, Object> chatMessage = new HashMap<>();
                 chatMessage.put("content", message);
@@ -141,6 +146,7 @@ public class EmailFragment extends Fragment {
                                 Toast.makeText(getActivity(), "Error al enviar el mensaje", Toast.LENGTH_SHORT).show();
                             }
                         });
+                   }
             }
         });
 
@@ -162,13 +168,13 @@ public class EmailFragment extends Fragment {
                         for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                             String content = document.getString("content");
                             Date timestamp = document.getDate("timestamp");
-                            String userId = document.getString("user");
+                            String userId = document.getString("sender");
                             String receiverId = document.getString("receiver");
                             // Mostrar solo los mensajes del usuario autenticado
                             if (userId != null && userId.equals(currentUser.getUid())) {
-
+                                isSender = true;
                             }
-                            boolean isSender = userId != null && userId.equals(currentUser.getUid());
+                             isSender = userId != null && userId.equals(currentUser.getUid());
 
                             ChatMessage message = new ChatMessage(content, timestamp, userId, isSender);
                             messageList.add(message);
@@ -199,14 +205,31 @@ public class EmailFragment extends Fragment {
         @NonNull
         @Override
         public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
+            View view;
+            if (viewType == 1) {
+                // Inflar el diseño para mensaje enviado
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_sent, parent, false);
+            } else {
+                // Inflar el diseño para mensaje recibido
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_received, parent, false);
+            }
             return new MessageViewHolder(view);
         }
-
+        @Override
+        public int getItemViewType(int position) {
+            ChatMessage message = messageList.get(position);
+            if (message.isSender()) {
+                // Mensaje enviado
+                return 1;
+            } else {
+                // Mensaje recibido
+                return 2;
+            }
+        }
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
             ChatMessage message = messageList.get(position);
-            holder.bind(message, message.isSender());
+            holder.bind(message );
         }
 
 
@@ -220,6 +243,7 @@ public class EmailFragment extends Fragment {
             private TextView timestampTextView;
             private ImageView profileImageView;
 
+
             public MessageViewHolder(@NonNull View itemView) {
                 super(itemView);
                 contentTextView = itemView.findViewById(R.id.contentTextView);
@@ -227,33 +251,26 @@ public class EmailFragment extends Fragment {
                 profileImageView = itemView.findViewById(R.id.profileImageView);
             }
 
-
-            public void bind(ChatMessage message, boolean isSender) {
+            public void bind(ChatMessage message) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                 String timestamp = dateFormat.format(message.getTimestamp());
                 contentTextView.setText(message.getContent());
                 timestampTextView.setText(timestamp);
-                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) contentTextView.getLayoutParams();                // Configurar la gravedad del texto y la hora según el remitente del mensaje
-                if (isSender) {
-                    contentTextView.setGravity(Gravity.END); // Alinear a la derecha
-                    timestampTextView.setGravity(Gravity.END); // Alinear a la derecha
-                    layoutParams.setMarginStart(200);
-                    contentTextView.setBackgroundResource(R.drawable.message_bubble_right);
-                    Glide.with(itemView.getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileImageView);
 
+                // Configurar la gravedad del texto y la hora según el remitente del mensaje
+                if (message.isSender()) {
+                    contentTextView.setGravity(Gravity.END); // Alinear a la derecha
+                    //timestampTextView.setGravity(Gravity.END); // Alinear a la derecha
+                    Glide.with(itemView.getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).circleCrop().into(profileImageView);
                 } else {
                     contentTextView.setGravity(Gravity.START); // Alinear a la izquierda
                     timestampTextView.setGravity(Gravity.START); // Alinear a la izquierda
-                    layoutParams.setMarginStart(0);
-                    contentTextView.setBackgroundResource(R.drawable.message_bubble_left);
-                    Glide.with(itemView.getContext()).load(photoUrl).into(profileImageView);
-
+                    Glide.with(itemView.getContext()).load(photoUrl).circleCrop().into(profileImageView);
                 }
-
-
             }
         }
     }
+
     private void createMessagesCollectionIfNotExists(String conversationId) {
         db.collection("chats")
                 .document(conversationId)

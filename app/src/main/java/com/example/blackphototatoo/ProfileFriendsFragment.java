@@ -146,18 +146,18 @@ public class ProfileFriendsFragment extends Fragment {
 //                ViewModelProvider(requireActivity()).get(AppViewModel.class);
 //
 //
-//        FirebaseFirestore.getInstance()
-//                .collection("posts")
-//                .whereEqualTo("uid", uidPostProfile)
-//                .orderBy("ordenadaDateTime", Query.Direction.DESCENDING).get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        QuerySnapshot querySnapshot = task.getResult();
-//                        System.out.println("-------------------------------querySnapshot.size()     -- " + querySnapshot.size());
-//                        numberOfPosts = (int) querySnapshot.size();
-//
-//                    }
-//                });
+        FirebaseFirestore.getInstance()
+                .collection("posts")
+                .whereEqualTo("uid", uidPostProfile)
+                .orderBy("ordenadaDateTime", Query.Direction.DESCENDING).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        System.out.println("-------------------------------querySnapshot.size()     -- " + querySnapshot.size());
+                        numberOfPosts = (int) querySnapshot.size();
+
+                    }
+                });
 
         postsRecyclerView = view.findViewById(R.id.recyclerProfile);
 

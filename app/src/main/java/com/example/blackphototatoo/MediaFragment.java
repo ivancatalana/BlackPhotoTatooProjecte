@@ -26,16 +26,15 @@ public class MediaFragment extends Fragment {
     private NavController navController;
     private Post postDestino;
     private String uidPost;
-    public MediaFragment() {
-// Required empty public constructor
-    }
 
+    public MediaFragment() {
+    // Required empty public constructor
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) { // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_media, container, false);
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -68,14 +67,9 @@ public class MediaFragment extends Fragment {
       authorImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //appViewModel.postSeleccionado.setValue(postDestino);
-                System.out.println("------------------------------------------------------uidPost:  "+ uidPost);
+
                 Bundle bundle = new Bundle();
-
-                //bundle.putString("nombre", post.author);
                 bundle.putString("uid",uidPost);
-                //bundle.putInt("foto", R.drawable.profile);
-
 
                 navController.navigate(R.id.profileFriendsFragment,bundle);
                 // Acción a realizar cuando se hace clic en el ImageView

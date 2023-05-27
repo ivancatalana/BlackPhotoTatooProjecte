@@ -338,6 +338,7 @@ public class EditProfileFragment extends Fragment {
                                             .addOnSuccessListener(aVoid -> {
                                                 // La foto de perfil se ha actualizado correctamente
                                                 showToast(context,"Imagen cambiada correctamente");
+                                                actualizarImagenUsuarios();
                                                 progressDialog.dismiss();
                                             })
                                             .addOnFailureListener(e -> {
@@ -356,6 +357,31 @@ public class EditProfileFragment extends Fragment {
             e.printStackTrace();
             showToast(context,"Error al cargar y comprimir la imagen");
         }
+
+    }
+
+    private static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+
+            pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser(), getContext());
+        }
+    }
+    public void restartApplication(Activity activity) {
+        Intent intent = activity.getBaseContext().getPackageManager().getLaunchIntentForPackage(activity.getBaseContext().getPackageName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+    public void actualizarImagenUsuarios(){
         final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         final CollectionReference collectionRef = firestore.collection("usuariosPrueba");
         final FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -384,27 +410,5 @@ public class EditProfileFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
-            selectedImageUri = data.getData();
-
-            pujaIguardarEnFirestore( selectedImageUri, mAuth.getCurrentUser(), getContext());
-        }
-    }
-    public void restartApplication(Activity activity) {
-        Intent intent = activity.getBaseContext().getPackageManager().getLaunchIntentForPackage(activity.getBaseContext().getPackageName());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
-        activity.finish();
     }
 }
