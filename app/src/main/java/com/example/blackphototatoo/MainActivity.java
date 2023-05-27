@@ -42,7 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AiChatAdapter.FragmentReloadListener {
 
     ActivityMainBinding binding;
     private NavController navController;
@@ -66,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
         navController = ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment)).getNavController();
         NavigationUI.setupWithNavController(binding.bottomNavView, navController);
 
-        // Obtener una referencia al DrawerLayout
+        // Obtener una referencia al DrawerLayout Y lo bloqueamos
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         // Obtener una referencia al NavigationView
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         });
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
+
 
         MyViewPagerAdapter adapter = new MyViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MyRecyclerViewFragment(), "Tab 1");
@@ -208,4 +210,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onReloadFragment() {
+        recreate();
+    }
+
 }

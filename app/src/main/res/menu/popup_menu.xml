@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_save_gallery"
+        android:title="Guardar en galería" />
+    <item
+        android:id="@+id/menu_delete_post"
+        android:title="Eliminar post" />
+</menu>

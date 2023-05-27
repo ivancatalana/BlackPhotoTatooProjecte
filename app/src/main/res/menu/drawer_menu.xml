@@ -16,7 +16,6 @@
             android:textColor="@android:color/white"
             android:icon="@drawable/visit"
             android:textAppearance="@style/MyDrawerMenuTextStyle"
-
             android:title="Image Size" />
 
         <item
@@ -29,14 +28,20 @@
             android:id="@+id/contrast"
             android:title="Contrast" />
 
-        <item android:title="Saturation" />
+        <item
+            android:id="@+id/saturation"
+            android:title="Saturation" />
 
-        <item android:title="Retouch" />
+        <item
+            android:id="@+id/retouch"
+
+            android:title="Retouch" />
 
         <item
             android:id="@+id/resize"
             android:title="Remove Background" />
 
     </group>
+
 
 </menu>

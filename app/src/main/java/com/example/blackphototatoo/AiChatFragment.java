@@ -1,5 +1,6 @@
 package com.example.blackphototatoo;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ public class AiChatFragment extends Fragment {
     private Button loadMoreButton;
     private boolean isInitialLoad = true; // Nuevo flag para controlar la carga inicial de mensajes
     private List<AiChatMessage> messages;
+    private AiChatAdapter tuAdaptador;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ai_chat, container, false);
@@ -148,5 +151,18 @@ public class AiChatFragment extends Fragment {
                 // Maneja el error de consulta según tus necesidades
             }
         });
+    }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        // Verifica si la actividad implementa la interfaz FragmentReloadListener
+        if (context instanceof AiChatAdapter.FragmentReloadListener) {
+            // Crea el adaptador y pasa la instancia de la actividad como listener
+            tuAdaptador = new AiChatAdapter((AiChatAdapter.FragmentReloadListener) context);
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " debe implementar FragmentReloadListener");
+        }
     }
 }

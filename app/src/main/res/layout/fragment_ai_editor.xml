@@ -26,7 +26,6 @@
         android:layout_height="47dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/button_bubble"
-        android:enabled="false"
         android:text="Black/White"
         app:layout_constraintBottom_toTopOf="@+id/promtEditText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,6 +84,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/promtEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/promtEditText" />
+
+    <TextView
+        android:id="@+id/progressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/rocksalt"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnRotate"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,14 +14,18 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,11 +40,13 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,8 +55,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,6 +71,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -89,15 +99,37 @@ public class AIEditorFragment extends Fragment {
     private String serverImageFilePath;
     private String prompt;
     private String rutaOrigenImagen;
-    private String  imageUrl;
+    private TextView progressText;
+    private String imageUrl;
     private Uri imageUriGuardada; // Declarar la variable a nivel de clase
     // Declaración del Handler
     private Handler handler = new Handler();
+    private boolean serverResponseReceived = false;
+    private int progressCounter = 0;
+
     @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ai_editor, container, false);
+
+        imageView = view.findViewById(R.id.imageView);
+        serverImageView = view.findViewById(R.id.serverImageView);
+        progressText = view.findViewById(R.id.progressTextView);
+        uploadButton = view.findViewById(R.id.uploadButton);
+        promptEdit = view.findViewById(R.id.promtEditText);
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("selectedImageUri")) {
+            Uri selectedImageUri = args.getParcelable("selectedImageUri");
+            System.out.println(""+ selectedImageUri);
+            String filepath = getImagePathFromUri(selectedImageUri);
+            System.out.println("Filepath : ----------------------------------"+ filepath);
+            imageUriGuardada=selectedImageUri;
+            imageView.setTag(selectedImageUri.toString());            // Cargar la imagen en el ImageView utilizando Glide
+            Glide.with(requireContext())
+                    .load(selectedImageUri)
+                    .into(imageView);
+        }
 
         buttonRotate = view.findViewById(R.id.btnRotate);
         buttonRotate.setOnClickListener(new View.OnClickListener() {
@@ -107,11 +139,14 @@ public class AIEditorFragment extends Fragment {
                 rotateImage90Degrees();
             }
         });
-        imageView = view.findViewById(R.id.imageView);
-        serverImageView = view.findViewById(R.id.serverImageView);
-        uploadButton = view.findViewById(R.id.uploadButton);
-        promptEdit = view.findViewById(R.id.promtEditText);
-        uploadButton.setEnabled(false);
+        // Establece el texto de Progreso de comunicación con el servidor
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressText.setText("↓ help ↓");
+            }
+        });
+
         ImageButton btnSend = view.findViewById(R.id.btnSend);
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +164,7 @@ public class AIEditorFragment extends Fragment {
                         @Override
                         public void run() {
                             Glide.with(requireContext())
-                                  // .load("https://static.vecteezy.com/system/resources/thumbnails/008/034/405/small/loading-bar-doodle-element-hand-drawn-vector.jpg")
+                                    // .load("https://static.vecteezy.com/system/resources/thumbnails/008/034/405/small/loading-bar-doodle-element-hand-drawn-vector.jpg")
                                     .asGif()
                                     .load("https://cdn.kibrispdr.org/data/1789/loading-bar-gif-36.gif")
                                     .into(serverImageView);
@@ -154,55 +189,72 @@ public class AIEditorFragment extends Fragment {
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               showPopupBlackWhite(imageUriGuardada);
+                showPopupBlackWhite(imageUriGuardada);
 
             }
         });
         serverImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                // Se configura un temporizador para esperar 1 segundo antes de mostrar el diálogo
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Se muestra el diálogo
-                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                        builder.setMessage("¿Qué deseas hacer con la imagen?")
-                                .setPositiveButton("Guardar en galería", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        // El usuario ha seleccionado guardar la imagen en la galería
-                                        guardarImagenEnGaleria(true);
-                                    }
-                                })
-                                .setNegativeButton("Utilizar en ImageView", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        guardarImagenEnGaleria(false);
+                Drawable drawable = serverImageView.getDrawable();
+                if (drawable == null) {                    // Inflar el diseño personalizado del Toast
+                    String mensajeToast= "You can prompt things like:\n · Make him a vector logo\n · Make it a comic \n Or whathever you want. \n The AI understand \nall Languages. Let's Play!\n\n\nLong Tap on image to Save.";
+                    Toast toast = Toast.makeText(getContext(), mensajeToast, Toast.LENGTH_LONG);
+                    TextView toastTextView = toast.getView().findViewById(android.R.id.message);
+                    toastTextView.setTextSize(16); // Tamaño de letra en píxeles
+                    toastTextView.setTypeface(Typeface.create("rocksalt", Typeface.BOLD)); // Fuente personalizada
+                    toast.show();
 
-                                        // El usuario ha seleccionado utilizar la imagen en el ImageView
+                    // Programar la eliminación del Toast después de 5 segundos
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            toast.cancel();
+                        }
+                    }, 5000);
 
-                                        // Cargar la imagen como miniatura respetando su aspecto original
-                                        int targetWidth = imageView.getWidth();
-                                        int targetHeight = imageView.getHeight();
-                                        Bitmap bitmap = decodeSampledBitmapFromFile(imageUriGuardada.toString(), targetWidth, targetHeight);
+                } else {
+                    // Resto del código para procesar la imagen cargada en el ImageView
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Se muestra el diálogo
+                            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                            builder.setMessage("¿Qué deseas hacer con la imagen?")
+                                    .setPositiveButton("Guardar en galería", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // El usuario ha seleccionado guardar la imagen en la galería
+                                            guardarImagenEnGaleria(true);
+                                        }
+                                    })
+                                    .setNegativeButton("Utilizar en ImageView", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            guardarImagenEnGaleria(false);
 
-                                        // Mostrar la imagen corregida en el ImageView
-                                        imageView.setImageBitmap(bitmap);
-                                        imageView.setTag(imageUriGuardada.toString());
-                                        uploadButton.setEnabled(true);
+                                            // El usuario ha seleccionado utilizar la imagen en el ImageView
 
+                                            // Cargar la imagen como miniatura respetando su aspecto original
+                                            int targetWidth = imageView.getWidth();
+                                            int targetHeight = imageView.getHeight();
+                                            Bitmap bitmap = decodeSampledBitmapFromFile(imageUriGuardada.toString(), targetWidth, targetHeight);
 
-                                        // Aquí puedes realizar cualquier otra lógica necesaria
-                                    }
-                                });
-                        builder.create().show();
-                    }
-                }, 1000); // Esperar 1 segundo (1000 milisegundos)
+                                            // Mostrar la imagen corregida en el ImageView
+                                            imageView.setImageBitmap(bitmap);
+                                            imageView.setTag(imageUriGuardada.toString());
+                                            uploadButton.setEnabled(true);
+
+                                            // Aquí puedes realizar cualquier otra lógica necesaria
+                                        }
+                                    });
+                            builder.create().show();
+                        }
+                    }, 1000); // Esperar 1 segundo (1000 milisegundos)
+                }
 
                 // Indicar que el evento se ha gestionado
                 return true;
             }
         });
-
         // Cierra el teclado al darle a intro
 
         promptEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -231,7 +283,7 @@ public class AIEditorFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == getActivity().RESULT_OK && data != null) {
             Uri imageUri = data.getData();
-            imageUriGuardada=imageUri;
+            imageUriGuardada = imageUri;
 
             // Obtener la ruta del archivo de la URI
             String filePath = getImagePathFromUri(imageUri);
@@ -283,6 +335,7 @@ public class AIEditorFragment extends Fragment {
 
         return inSampleSize;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -290,35 +343,79 @@ public class AIEditorFragment extends Fragment {
             pickImageFromGallery();
         }
     }
+
     private String getImagePathFromUri(Uri uri) {
-        String imagePath = null;
-        if (getContext() != null) {
-            Cursor cursor = null;
-            try {
-                String[] projection = {MediaStore.Images.Media.DATA};
-                cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    imagePath = cursor.getString(columnIndex);
+        String filePath = null;
+        if (uri != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(requireContext(), uri)) {
+                if (isMediaDocument(uri)) {
+                    // Si la URI pertenece a un documento de medios
+                    String docId = DocumentsContract.getDocumentId(uri);
+                    String[] split = docId.split(":");
+                    String type = split[0];
+                    Uri mediaUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    String selection = MediaStore.Images.Media._ID + "=?";
+                    String[] selectionArgs = new String[]{split[1]};
+                    filePath = getDataColumn(requireContext(), mediaUri, selection, selectionArgs);
+                } else if (isDownloadsDocument(uri)) {
+                    // Si la URI pertenece a un documento descargado
+                    String id = DocumentsContract.getDocumentId(uri);
+                    Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                    filePath = getDataColumn(requireContext(), contentUri, null, null);
                 }
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
+            } else {
+                // Si la URI es una URI de contenido general
+                filePath = getDataColumn(requireContext(), uri, null, null);
             }
         }
-        return imagePath;
+        return filePath;
     }
-    private void uploadFile(Uri uri , String prompt) {
-        // Ruta del archivo en el dispositivo Android
 
+    private String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        String filePath = null;
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                filePath = cursor.getString(columnIndex);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return filePath;
+    }
+
+    private boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    private boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    private void uploadFile(Uri uri, String prompt) {
+        // Ruta del archivo en el dispositivo Android
         String filePath = getImagePathFromUri(uri);
         String promptText = prompt;
+
         if (promptText.isEmpty()) {
             Toast.makeText(getContext(), "El campo de texto está vacío", Toast.LENGTH_SHORT).show();
             return;
         }
-        //Guardar prompt y uri de la imagen enla coleccion
+
+        // Establece el texto de Progreso de comunicación con el servidor
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressText.setText(" 1%");
+            }
+        });
+
+        // Guardar prompt y uri de la imagen en la colección
 
         // Rotar la imagen según los metadatos de rotación
         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
@@ -331,7 +428,6 @@ public class AIEditorFragment extends Fragment {
                 .writeTimeout(200, TimeUnit.SECONDS)
                 .build();
 
-
         String randomFileName = UUID.randomUUID().toString() + ".jpg";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -341,10 +437,10 @@ public class AIEditorFragment extends Fragment {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", randomFileName,
                         RequestBody.create(MediaType.parse("image/jpeg"), bitmapData))
-                .addFormDataPart("prompt", promptText)  //
+                .addFormDataPart("prompt", promptText)
                 .build();
 
-        //Ponemos vacio el campo edit Text
+        //Ponemos vacío el campo EditText
         promptEdit.setText("");
 
         // Crear solicitud POST
@@ -358,21 +454,31 @@ public class AIEditorFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                // Restablece el booleano a false y el contador de progreso a cero en caso de fallo
+                serverResponseReceived = false;
+                progressCounter = 0;
+                // Establece el texto de error en caso de fallo en la comunicación con el servidor
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressText.setText("Server Error");
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseData = response.body().string();
+                    serverResponseReceived = true; // Establece el booleano en true cuando se recibe la respuesta del servidor
+
                     // Procesar la respuesta del servidor
                     System.out.println("Respuesta del servidor: " + responseData);
                     try {
                         JSONObject jsonObject = new JSONObject(responseData);
                         imageUrl = jsonObject.getString("link");
 
-                        guardarRegistroEdiciones(promptText,uri,imageUrl);
-
-
+                        guardarRegistroEdiciones(promptText, uri, imageUrl);
 
                         // Cargar la imagen desde la URL utilizando Glide y mostrarla en el ImageView
                         getActivity().runOnUiThread(new Runnable() {
@@ -381,6 +487,8 @@ public class AIEditorFragment extends Fragment {
                                 Glide.with(requireContext())
                                         .load(imageUrl)
                                         .into(serverImageView);
+                                // Restablecer el texto a vacío después de recibir la respuesta del servidor
+                                progressText.setText("");
                             }
                         });
                     } catch (JSONException e) {
@@ -392,6 +500,46 @@ public class AIEditorFragment extends Fragment {
                 }
             }
         });
+        // Actualización periódica del progreso cada 10 segundos
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                int progress = calculateProgress(); // Calcula el progreso actual (10%, 20%, etc.)
+                String progressTextS = progress + "%";
+                if (isAdded() && isVisible()) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressText.setText(progressTextS); // Actualiza el texto con el progreso actual
+                    }
+                });
+
+                if (!serverResponseReceived) {
+                    // Si aún no se ha recibido la respuesta del servidor, programa la próxima actualización
+                    handler.postDelayed(this, 10000); // 10 segundos
+                } else {
+                    // Restablece el texto a vacío después de recibir la respuesta del servidor
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressText.setText("");
+                        }
+                    });
+                    // Restablece el booleano a false y el contador de progreso a cero
+                    serverResponseReceived = false;
+                    progressCounter = 0;
+                }
+            }}
+        };
+        handler.postDelayed(runnable, 10000); // Inicia la actualización después de 10 segundos
+    }
+
+    private int calculateProgress() {
+        // Aumenta el contador en cada actualización
+        progressCounter++;
+        return progressCounter * 10; // Aumenta en 10% en cada actualización
     }
 
 
@@ -411,11 +559,13 @@ public class AIEditorFragment extends Fragment {
         // Establece la imagen rotada en el ImageView
         imageView.setImageBitmap(rotatedBitmap);
     }
+
     private Bitmap rotateImage(Bitmap bitmap2, float degrees) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degrees);
         return Bitmap.createBitmap(bitmap2, 0, 0, bitmap2.getWidth(), bitmap2.getHeight(), matrix, true);
     }
+
     private Bitmap rotateImageBasedOnExif(Bitmap bitmap, String imagePath) {
         try {
             ExifInterface exifInterface = new ExifInterface(imagePath);
@@ -445,6 +595,7 @@ public class AIEditorFragment extends Fragment {
 
         return bitmap;
     }
+
     private long getFileSizeFromUri(Uri uri) {
         try {
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
@@ -492,7 +643,7 @@ public class AIEditorFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!generarNombreAleatorio){
+        if (!generarNombreAleatorio) {
 
             // Obtener la ruta del archivo de la URI
             String filePath = getImagePathFromUri(imageUriGuardada);
@@ -514,49 +665,6 @@ public class AIEditorFragment extends Fragment {
     }
 
 
-    private String getTempFilePath() {
-        // Obtener el directorio de almacenamiento externo privado
-        File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        // Crear el filepath temporal utilizando el directorio de almacenamiento y el nombre de archivo constante
-        String tempFilePath = storageDir.getAbsolutePath() + File.separator + "temp.jpg";
-        // Obtener la ruta del archivo guardado
-        return tempFilePath;
-    }
-
-    private String saveImageFromUrl(String imageUrl) {
-        // Obtener el directorio de almacenamiento externo privado utilizando el contexto del fragment
-        File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        // Crear el filepath temporal utilizando el directorio de almacenamiento y el nombre de archivo constante
-        String tempFilePath = storageDir.getAbsolutePath() + File.separator + "temp.jpg";
-
-        // Crear el filepath y el archivo de destino
-        String fileName = "temp.jpg";
-        File destFile = new File(storageDir, fileName);
-
-        // Descargar y guardar la imagen desde la URL en el archivo de destino
-        try {
-            URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
-
-            InputStream input = connection.getInputStream();
-            OutputStream output = new FileOutputStream(destFile);
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = input.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
-            }
-
-            output.close();
-            input.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return tempFilePath;
-    }
 
     public void guardarRegistroEdiciones(String prompt, Uri rutaImagen, String respuestaServidor) {
         // Obtener el UID del usuario actual
@@ -589,7 +697,7 @@ public class AIEditorFragment extends Fragment {
                     public void onSuccess(Void aVoid) {
                         // La información se guardó correctamente en Firestore
                         // Continuar con el proceso de enviar la imagen al servidor
-                     //   enviarImagenAlServidor(rutaImagen);
+                        //   enviarImagenAlServidor(rutaImagen);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -600,6 +708,7 @@ public class AIEditorFragment extends Fragment {
                     }
                 });
     }
+
     public void showPopupBlackWhite(Uri uri) {
         // Inflar el diseño del popup
         LayoutInflater inflater = LayoutInflater.from(requireContext());
@@ -629,7 +738,7 @@ public class AIEditorFragment extends Fragment {
                 int value1 = seekBar1.getProgress();
                 int value2 = seekBar2.getProgress();
                 // Realizar la acción deseada con los valores seleccionados
-                uploadFile(uri, "opencv "+ value1 + " " + value2);
+                uploadFile(uri, "opencv " + value1 + " " + value2);
 
                 // Cerrar el popup
                 popupWindow.dismiss();

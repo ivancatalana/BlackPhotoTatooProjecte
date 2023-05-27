@@ -89,8 +89,13 @@ public class UploadPhotoFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                navController.navigate(R.id.editor_ai_Fragment);
-
+                if (selectedImageUri != null) {
+                    Bundle args = new Bundle();
+                    args.putParcelable("selectedImageUri", selectedImageUri);
+                    navController.navigate(R.id.editor_ai_Fragment, args);
+                } else {
+                    Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -107,8 +112,9 @@ public class UploadPhotoFragment extends Fragment {
         chatIAMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 navController.navigate(R.id.aiChatFragment);
+
+
 
             }
         });
@@ -122,12 +128,12 @@ public class UploadPhotoFragment extends Fragment {
             }
         });
 
-        Button switchToBottom2Button = view.findViewById(R.id.switch_to_bottom2_button);
-        switchToBottom2Button.setOnClickListener(new View.OnClickListener() {
+        Button editSelected = view.findViewById(R.id.editSelectedButton);
+        editSelected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (selectedImageUri != null) {
-                    navController.navigate(R.id.homeFragment);
+                   // navController.navigate(R.id.);
                 } else {
                     Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
                 }
