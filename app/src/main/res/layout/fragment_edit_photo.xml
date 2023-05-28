@@ -23,16 +23,14 @@
             android:src="@drawable/menu_drawer" />
     </RelativeLayout>
 
-    <Button
+    <ImageView
         android:id="@+id/guardarButton"
         android:layout_width="113dp"
         android:layout_height="133dp"
-        android:layout_marginLeft="-35dp"
-        android:layout_marginTop="-50dp"
+        android:layout_marginLeft="-0dp"
+        android:layout_marginTop="-0dp"
         android:background="#00000000"
-        android:text="↶"
-        android:textColor="#050505"
-        android:textSize="50sp"
+        android:src="@drawable/save"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

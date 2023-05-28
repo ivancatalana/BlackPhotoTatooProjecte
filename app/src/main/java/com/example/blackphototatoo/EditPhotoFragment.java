@@ -183,7 +183,7 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                 drawerLayout.openDrawer(GravityCompat.END);
             }
         });
-        Button guardarButton = view.findViewById(R.id.guardarButton);
+        ImageView guardarButton = view.findViewById(R.id.guardarButton);
         guardarButton.setOnClickListener(v -> {
             guardarImagenEnGaleria();
         });
