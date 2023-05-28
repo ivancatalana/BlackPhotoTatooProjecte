@@ -24,7 +24,6 @@
                 android:fontFamily="@font/rocksalt"
                 android:text="Discover"
                 android:textColor="@color/black"
-
                 android:textSize="34sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -200,6 +200,11 @@
         android:id="@+id/tatooPrueba"
         android:name="com.example.blackphototatoo.TatooPrueba"
         android:label="TatooPrueba" />
+    <fragment
+        android:id="@+id/searchFirebaseFragment"
+        android:name="com.example.blackphototatoo.SearchFirebaseFragment"
+        android:label="fragment_search_firebase"
+        tools:layout="@layout/fragment_search_firebase" />
 
 
 </navigation>

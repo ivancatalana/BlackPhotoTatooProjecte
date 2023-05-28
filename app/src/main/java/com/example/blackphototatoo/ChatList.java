@@ -51,8 +51,6 @@ public class ChatList extends Fragment {
     public ChatList() {
         // Required empty public constructor
     }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +74,6 @@ public class ChatList extends Fragment {
 //                        .addToBackStack(null)
 //                        .commit();
 
-
             }
         });
         return view;
@@ -89,7 +86,6 @@ public class ChatList extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         List<MyEmails> myObjects = new ArrayList<>();
         CollectionReference chatsCollectionRef = FirebaseFirestore.getInstance().collection("chats");
-
         // Obtener todas las subcolecciones de "chats"
         chatsCollectionRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

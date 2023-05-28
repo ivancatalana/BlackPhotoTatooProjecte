@@ -17,6 +17,7 @@
             android:id="@+id/tatooImageViewStore"
             android:layout_width="140dp"
             android:layout_height="140dp"
+            android:elevation="16dp"
             android:scaleType="centerCrop" />
 
         <LinearLayout
@@ -25,6 +26,29 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_marginStart="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/relativeButtonMap"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="1dp"
+                    android:background="@drawable/button_dashboard"
+                    android:elevation="16dp"
+                    android:gravity="right"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/visit" />
+                </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/tatooNameTextView"
@@ -42,28 +66,6 @@
                 android:fontFamily="@font/robotoblack"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <RelativeLayout
-                    android:id="@+id/relativeButtonMap"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_dashboard"
-                    android:elevation="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/visit" />
-                </RelativeLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
