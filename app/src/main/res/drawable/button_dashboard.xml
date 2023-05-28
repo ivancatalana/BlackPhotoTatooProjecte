@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#D4AF37" /> <!-- Color de fondo dorado -->
+    <stroke android:color="#000000" android:width="2dp" /> <!-- Color de marco negro y grosor -->
+    <corners android:radius="4dp" /> <!-- Radio de las esquinas del botón -->
+</shape>

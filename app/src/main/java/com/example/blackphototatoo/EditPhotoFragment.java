@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -22,7 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 // Importa las clases
@@ -32,6 +35,8 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.model.AspectRatio;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -59,7 +64,9 @@ import jp.co.cyberagent.android.gpuimage.filter.GPUImageHighlightShadowFilter;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageLuminanceThresholdFilter;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImagePosterizeFilter;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSaturationFilter;
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageSketchFilter;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageThresholdEdgeDetectionFilter;
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageToonFilter;
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageWhiteBalanceFilter;
 
 public class EditPhotoFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener {
@@ -81,10 +88,17 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
     private Bitmap bitmap;
     private Bitmap originalBitmap;
     private GPUImageFilter currentFilter;
-
+    private ConstraintLayout filt;
+    private ConstraintLayout seekBarConstraint;
+    private Button posterFilterButton;
+    private Button filterSketch;
+    private Button grayButton;
+    private boolean buttonsEnabled = true;
+    private Button filterComic;
+    private ActionBarDrawerToggle drawerToggle;
     private enum AdjustType {
         BRIGHTNESS,
-        THRESHOLD, SHADOW, TEMPERATURE, SATURATION, LUMINANCE_THRESHOLD, CONTRAST
+        THRESHOLD, SHADOW, TEMPERATURE, SATURATION, LUMINANCE_THRESHOLD, FILTERS, CONTRAST
     }
 
     private AdjustType currentAdjustType = AdjustType.BRIGHTNESS;  // Valor inicial predeterminado
@@ -98,7 +112,8 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
         drawerLayout = getActivity().findViewById(R.id.drawer_layout);
         NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        filt= view.findViewById(R.id.filtersConstraint);
+        seekBarConstraint= view.findViewById(R.id.constraintSeekbar);
         navigationView.getMenu().clear(); // Limpiar el menú actual
         navigationView.inflateMenu(R.menu.drawer_menu); // Inflar el menú deseado
         seekBarValueTextView = view.findViewById(R.id.progressSeekbarTextView);
@@ -112,6 +127,25 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
             // Por ejemplo, si estás utilizando NavigationView, puedes abrir el drawer de esta manera:
             drawerLayout.openDrawer(GravityCompat.END);
         });
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Configurar ActionBarDrawerToggle
+        drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                // Acción a realizar cuando el DrawerLayout se abre
+                // Por ejemplo, realizar una operación específica al abrir el menú
+                gpuImage.setImage(fotoFinal);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Acción a realizar cuando el DrawerLayout se cierra
+            }
+        };
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
 //        cropButton.setOnClickListener(v -> {
 //            // Obtén el Drawable del archivo drawable
 //            Drawable drawable = photoImageView.getDrawable();
@@ -141,10 +175,51 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
 //                    .start(getActivity(), this);  // Inicia la actividad de uCrop con el fragmento actual como resultado
 //        });
 
+        RelativeLayout buttonLayout = view.findViewById(R.id.relativeButtonMenuDrawer);
+
+        buttonLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.END);
+            }
+        });
         Button guardarButton = view.findViewById(R.id.guardarButton);
         guardarButton.setOnClickListener(v -> {
             guardarImagenEnGaleria();
         });
+        filterSketch = view.findViewById(R.id.sketchFilter);
+        filterSketch.setOnClickListener(v -> {
+            if (buttonsEnabled) {
+                buttonsEnabled = false;
+                disableButtonsForDelay();
+                applySketchFilter();
+            }
+        });
+        filterComic = view.findViewById(R.id.comicFilter);
+        filterComic.setOnClickListener(v -> {
+            if (buttonsEnabled) {
+                buttonsEnabled = false;
+                disableButtonsForDelay();
+                applyComicFilter();
+            }
+        });
+        posterFilterButton = view.findViewById(R.id.posterFilter);
+        posterFilterButton.setOnClickListener(v -> {
+            if (buttonsEnabled) {
+                buttonsEnabled = false;
+                disableButtonsForDelay();
+                applyPosterizeFilter();
+            }
+        });
+        grayButton = view.findViewById(R.id.filter);
+        grayButton.setOnClickListener(v -> {
+            if (buttonsEnabled) {
+                buttonsEnabled = false;
+                disableButtonsForDelay();
+                applyGreyScaleFilter();
+            }
+        });
+
         adjustSeekBar = view.findViewById(R.id.adjustSeekBar);
         adjustTypeTextView = view.findViewById(R.id.seekBarTextView);
         adjustSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -172,13 +247,18 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                                 break;
                             case CONTRAST:
                                 updateContrast(lastSeekValue);
+
                                 break;
                             case SATURATION:
                                 updateSaturation(lastSeekValue);
+                                filt.setVisibility(View.INVISIBLE);
+
                                 break;
                             case LUMINANCE_THRESHOLD:
                                 updateLuminanceThreshold(lastSeekValue);
+
                                 break;
+
                             default:
                                 break;
                         }
@@ -192,7 +272,9 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                comprimirImagen(gpuImage.getBitmapWithFilterApplied());
+//                comprimirImagen(fotoFinal);
+//                bitmap=fotoFinal;
+//                photoImageView.setImageBitmap(bitmap);
             }
         });
 
@@ -208,21 +290,22 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                         selectedImageUri
                 );
                 photoImageView.setImageBitmap(selectedImageBitmap);
-                originalBitmap = selectedImageBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                fotoFinal = selectedImageBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                gpuImage.setImage(fotoFinal);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         // Configurar imagen inicial
-        // Obtener el Drawable del archivo drawable
-        Drawable drawable = photoImageView.getDrawable();
-
-        // Convertir el Drawable en Bitmap
-         bitmap = ((BitmapDrawable) drawable).getBitmap();
-        fotoFinal = bitmap;
-        // Establecer el Bitmap en el GPUImageView
-        gpuImage.setImage(bitmap);
+//        // Obtener el Drawable del archivo drawable
+//        Drawable drawable = photoImageView.getDrawable();
+//
+//        // Convertir el Drawable en Bitmap
+//        bitmap = ((BitmapDrawable) drawable).getBitmap();
+//        fotoFinal = bitmap;
+//        // Establecer el Bitmap en el GPUImageView
+//        gpuImage.setImage(bitmap);
 
 
         return view;
@@ -247,9 +330,8 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                 public void run() {
                     float brightnessValue = mapSeekBarValueToBrightness(progress);
                     gpuImage.setFilter(new GPUImageBrightnessFilter(brightnessValue));
-                    photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
                     fotoFinal = gpuImage.getBitmapWithFilterApplied();
-                    bitmap=gpuImage.getBitmapWithFilterApplied();
+                    photoImageView.setImageBitmap(fotoFinal);
 
                 }
             });
@@ -281,9 +363,9 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                 public void run() {
                     float contrastValue = mapSeekBarValueToContrast(progress);
                     gpuImage.setFilter(new GPUImageContrastFilter(contrastValue));
-                    photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
                     fotoFinal = gpuImage.getBitmapWithFilterApplied();
-                    bitmap=gpuImage.getBitmapWithFilterApplied();
+                    photoImageView.setImageBitmap(fotoFinal);
+
                 }
             });
         }
@@ -309,16 +391,18 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
     private void updateShadow(int shadowIntensity) {
         if (currentAdjustType == AdjustType.SHADOW) {
             gpuImage.setFilter(new GPUImageHighlightShadowFilter(0, shadowIntensity));
-            photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
             fotoFinal = gpuImage.getBitmapWithFilterApplied();
+            photoImageView.setImageBitmap(fotoFinal);
+
         }
     }
 
     private void updateTemperature(int temperature) {
         if (currentAdjustType == AdjustType.TEMPERATURE) {
             gpuImage.setFilter(new GPUImageWhiteBalanceFilter(temperature, 0));
-            photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
             fotoFinal = gpuImage.getBitmapWithFilterApplied();
+            photoImageView.setImageBitmap(fotoFinal);
+
         }
     }
 
@@ -329,9 +413,9 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                 public void run() {
                     float saturationValue = mapSeekBarValueToSaturation(progress);
                     gpuImage.setFilter(new GPUImageSaturationFilter(saturationValue));
-                    photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
                     fotoFinal = gpuImage.getBitmapWithFilterApplied();
-                    bitmap=gpuImage.getBitmapWithFilterApplied();
+                    photoImageView.setImageBitmap(fotoFinal);
+
 
                 }
             });
@@ -362,6 +446,8 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                     gpuImage.setFilter(new GPUImageLuminanceThresholdFilter(thresHoldValue));
                     photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
                     fotoFinal = gpuImage.getBitmapWithFilterApplied();
+
+
                 }
             });
         }
@@ -381,6 +467,60 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
 
         return scaledValue;
     }
+    private void applyComicFilter() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                gpuImage.setFilter(new GPUImageToonFilter());
+                fotoFinal = gpuImage.getBitmapWithFilterApplied();
+                photoImageView.setImageBitmap(fotoFinal);
+            }
+        });
+    }
+
+
+    private void applySketchFilter() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                gpuImage.setFilter(new GPUImageSketchFilter());
+                fotoFinal = gpuImage.getBitmapWithFilterApplied();
+                photoImageView.setImageBitmap(fotoFinal);
+            }
+        });
+    }
+
+ private void applyGreyScaleFilter() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                gpuImage.setFilter(new GPUImageGrayscaleFilter());
+                fotoFinal = gpuImage.getBitmapWithFilterApplied();
+                photoImageView.setImageBitmap(fotoFinal);
+            }
+        });
+    }
+
+ private void applyPosterizeFilter() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                gpuImage.setFilter(new GPUImagePosterizeFilter());
+                fotoFinal = gpuImage.getBitmapWithFilterApplied();
+                photoImageView.setImageBitmap(fotoFinal);
+            }
+        });
+    }
+
+
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -388,6 +528,8 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
         int seekBarProgress = 50; // Valor para centrar la SeekBar
         adjustSeekBar.setProgress(seekBarProgress);
         if (id == R.id.brightness) {
+            filt.setVisibility(View.INVISIBLE);
+            seekBarConstraint.setVisibility(View.VISIBLE);
             currentAdjustType = AdjustType.BRIGHTNESS;
             System.out.println("Opción seleccionada: brightness");
             adjustSeekBar.setProgress(seekBarProgress);
@@ -400,6 +542,8 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
 
 
         } else if (id == R.id.contrast) {
+            filt.setVisibility(View.INVISIBLE);
+            seekBarConstraint.setVisibility(View.VISIBLE);
             currentAdjustType = AdjustType.CONTRAST;
             adjustSeekBar.setProgress(25);
             System.out.println("Opción seleccionada: contrast");
@@ -412,12 +556,16 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
             });
 
         } else if (id == R.id.saturation) {
+            filt.setVisibility(View.INVISIBLE);
+            seekBarConstraint.setVisibility(View.VISIBLE);
             currentAdjustType = AdjustType.SATURATION;
             adjustSeekBar.setProgress(50);
             System.out.println("Opción seleccionada: saturation");
             adjustTypeTextView.setText("Saturation");
 
         } else if (id == R.id.blackwhite) {
+            filt.setVisibility(View.INVISIBLE);
+            seekBarConstraint.setVisibility(View.VISIBLE);
             currentAdjustType = AdjustType.LUMINANCE_THRESHOLD;
             adjustSeekBar.setProgress(50);
             System.out.println("Opción seleccionada: saturation");
@@ -425,8 +573,8 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
 
 
         } else if (id == R.id.imagesize) {
-
-            adjustSeekBar.setVisibility(View.INVISIBLE);
+            seekBarConstraint.setVisibility(View.INVISIBLE);
+            filt.setVisibility(View.INVISIBLE);
             System.out.println("Opción seleccionada: saturation");
             adjustTypeTextView.setText("Resize Image");
             getActivity().runOnUiThread(new Runnable() {
@@ -435,12 +583,14 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                     onCropButtonDrawerClicked();
                 }
             });
-
+        } else if (id == R.id.retouch) {
+            currentAdjustType = AdjustType.FILTERS;
+            filt.setVisibility(View.VISIBLE);
+            seekBarConstraint.setVisibility(View.INVISIBLE);
 
         } else {
             System.out.println("Opción desconocida: " + item.toString());
         }
-         photoImageView.setImageBitmap(bitmap);
         // Cierra el drawer
         drawerLayout.closeDrawer(GravityCompat.END);
         // Regresa true para indicar que el evento de selección ha sido manejado
@@ -663,5 +813,38 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
         gpuImage.setImage(bitmap);
         gpuImage.setFilter(filter);
         return gpuImage.getBitmapWithFilterApplied();
+    }
+    private void disableButtonsForDelay() {
+        long delayMillis=1000;
+        posterFilterButton.setEnabled(false);
+        grayButton.setEnabled(false);
+        filterSketch.setEnabled(false);
+        filterComic.setEnabled(false);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                posterFilterButton.setEnabled(true);
+                grayButton.setEnabled(true);
+                filterSketch.setEnabled(true);
+                filterComic.setEnabled(true);
+                buttonsEnabled = true;
+            }
+        }, delayMillis);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pasar eventos del ActionBarDrawerToggle al onOptionsItemSelected
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Importante: Eliminar el DrawerListener al destruir la vista del fragmento
+        drawerLayout.removeDrawerListener(drawerToggle);
     }
 }

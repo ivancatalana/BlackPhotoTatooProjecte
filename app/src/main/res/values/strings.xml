@@ -9,5 +9,8 @@
     <string name="retype_password">Re-type password</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="drawer_open">Abrir menú</string>
+    <string name="drawer_close">Cerrar menú</string>
+    <string name="close_button">closePopup</string>
 
 </resources>

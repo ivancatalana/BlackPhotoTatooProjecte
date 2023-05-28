@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ public class ProfileFragment extends Fragment {
     private TabLayout tabLayout;
     private ImageView profile;
     private Button editProfile;
-
+    private NavController navController;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -72,6 +73,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         profile= view.findViewById(R.id.friendProfileImageView);
+        navController = Navigation.findNavController(view);
 
         Glide.with(this)
                 .load(getResources().getDrawable(R.drawable.profile))
@@ -98,34 +100,105 @@ public class ProfileFragment extends Fragment {
                 return 3;
             }
         });
-
         new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position) {
                     case 0: default:
                         tab.setIcon(R.drawable.photo);
+                        tab.view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Acción para el ícono de la posición 0 (photo)
+                                // Realiza la navegación o realiza alguna otra acción deseada
+                                // Ejemplo de navegación:
+                                navController.navigate(R.id.tabbed1AFragment);
+                            }
+                        });
                         break;
                     case 1:
                         tab.setIcon(R.drawable.notification);
+                        tab.view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Acción para el ícono de la posición 1 (notification)
+                                // Realiza la navegación o realiza alguna otra acción deseada
+                                // Ejemplo de navegación:
+                                navController.navigate(R.id.tabbed1BFragment);
+                            }
+                        });
                         break;
                     case 2:
                         tab.setIcon(R.drawable.mail);
+                        tab.view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Acción para el ícono de la posición 2 (mail)
+                                // Realiza la navegación o realiza alguna otra acción deseada
+                                // Ejemplo de navegación:
+                                navController.navigate(R.id.tabbed1CFragment);
+                            }
+                        });
                         break;
                 }
-            /*    // Creamos un TextView personalizado para el título de la Tab
-                TextView tabTitle = new TextView(getContext());
-                tabTitle.setText(tab.getText());
-                tabTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17); // Cambiamos el tamaño de letra aquí
-                tabTitle.setTypeface(tabTitle.getTypeface(), Typeface.BOLD); // Establecemos la letra en negrita
-                //tabTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.semi_transparent_gold)); // Establecemos el color de letra
-                tab.setCustomView(tabTitle); // Establecemos el TextView personalizado como vista para la Tab
-                0
-             */
             }
         }).attach();
 
-            NavController navController = Navigation.findNavController(view);
+        Button leftButton = view.findViewById(R.id.leftButtonProfile);
+        Button rightButton = view.findViewById(R.id.rightButtonProfile);
+
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentPosition = viewPager.getCurrentItem();
+                if (currentPosition > 0) {
+                    viewPager.setCurrentItem(currentPosition - 1);
+                }
+            }
+        });
+
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentPosition = viewPager.getCurrentItem();
+                if (currentPosition < viewPager.getAdapter().getItemCount() - 1) {
+                    viewPager.setCurrentItem(currentPosition + 1);
+                }
+            }
+        });
+
+// Ocultar botón de la izquierda en el primer tab
+        if (viewPager.getCurrentItem() == 0) {
+            leftButton.setVisibility(View.GONE);
+        }
+
+// Ocultar botón de la derecha en el tercer tab
+        if (viewPager.getCurrentItem() == viewPager.getAdapter().getItemCount() - 1) {
+            rightButton.setVisibility(View.GONE);
+        }
+
+// Agregar un ViewPager.OnPageChangeListener para mostrar/ocultar los botones según la posición actual
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                // Mostrar u ocultar botón de la izquierda
+                if (position == 0) {
+                    leftButton.setVisibility(View.GONE);
+                } else {
+                    leftButton.setVisibility(View.VISIBLE);
+                }
+
+                // Mostrar u ocultar botón de la derecha
+                if (position == viewPager.getAdapter().getItemCount() - 1) {
+                    rightButton.setVisibility(View.GONE);
+                } else {
+                    rightButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+        NavController navController = Navigation.findNavController(view);
 
             // navegar a otro fragmento
             view.findViewById(R.id.button5).setOnClickListener(v -> {
@@ -182,4 +255,5 @@ public class ProfileFragment extends Fragment {
 //        super.onDestroyView();
 //        binding = null;
 //    }
+
 }

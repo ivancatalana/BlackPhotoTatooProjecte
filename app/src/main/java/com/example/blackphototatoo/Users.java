@@ -5,15 +5,18 @@ public class Users {
     private String Uid;
     private String name;
     private String mail;
-
+    private Boolean premium;
     public Users() {
     }
 
-    public Users(String uidPhotoUrl, String uid, String name, String mail) {
+
+
+    public Users(String uidPhotoUrl, String uid, String name, String mail, boolean premium) {
         UidPhotoUrl = uidPhotoUrl;
         Uid = uid;
         this.name = name;
         this.mail = mail;
+        this.premium = premium;
     }
 
     public String getMail() {
@@ -32,5 +35,11 @@ public class Users {
         return name;
     }
 
+    public Boolean getPremium() {
+        return premium;
+    }
 
+    public void setPremium(Boolean premium) {
+        this.premium = premium;
+    }
 }

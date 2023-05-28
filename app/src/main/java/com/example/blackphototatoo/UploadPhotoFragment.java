@@ -57,7 +57,7 @@ public class UploadPhotoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
-        effectsButton = view.findViewById(R.id.effectButton);
+        effectsButton = view.findViewById(R.id.editPhotoButton);
         selectedPhotoThumbnail = view.findViewById(R.id.selected_photo_thumbnail);
         Button selectPhotoButton = view.findViewById(R.id.select_photo_button);
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +81,16 @@ public class UploadPhotoFragment extends Fragment {
             public void onClick(View v) {
 
                 navController.navigate(R.id.nuevaPublicacionFragment);
+
+            }
+        });
+
+        Button tatoostore = view.findViewById(R.id.tatoo);
+        tatoostore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.tatooPrueba);
 
             }
         });
@@ -128,17 +138,7 @@ public class UploadPhotoFragment extends Fragment {
             }
         });
 
-        Button editSelected = view.findViewById(R.id.editSelectedButton);
-        editSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedImageUri != null) {
-                   // navController.navigate(R.id.);
-                } else {
-                    Toast.makeText(getContext(), "Please select an image first", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
         effectsButton.setOnClickListener(v -> {
             if (selectedImageUri != null) {
                 Bundle args = new Bundle();

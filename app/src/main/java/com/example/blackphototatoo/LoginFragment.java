@@ -185,7 +185,7 @@ public class LoginFragment extends Fragment {
         String email = mAuth.getCurrentUser().getEmail();
         String photoUrl = mAuth.getCurrentUser().getPhotoUrl().toString();
 
-        Users newUser = new Users(photoUrl, uid, name, email);
+        Users newUser = new Users(photoUrl, uid, name, email,false);
 
         FirebaseFirestore.getInstance().collection("usuariosPrueba").add(newUser);
     }

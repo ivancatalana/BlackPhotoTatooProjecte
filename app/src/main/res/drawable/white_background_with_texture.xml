@@ -3,7 +3,7 @@
     <item android:drawable="@drawable/white_background" /> <!-- Shape del fondo blanco (white_background.xml) -->
     <item>
         <bitmap
-            android:src="@drawable/texture"
+            android:src="@drawable/snow_texture"
             android:tileMode="repeat"
         android:scaleType="centerCrop"
         android:gravity="center" />

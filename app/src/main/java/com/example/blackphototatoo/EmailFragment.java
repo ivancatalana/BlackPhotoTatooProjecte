@@ -1,16 +1,13 @@
 package com.example.blackphototatoo;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,8 +33,6 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -248,7 +243,7 @@ public class EmailFragment extends Fragment {
                 super(itemView);
                 contentTextView = itemView.findViewById(R.id.contentTextView);
                 timestampTextView = itemView.findViewById(R.id.timestampTextView);
-                profileImageView = itemView.findViewById(R.id.profileImageView);
+                profileImageView = itemView.findViewById(R.id.tatooImageView);
             }
 
             public void bind(ChatMessage message) {

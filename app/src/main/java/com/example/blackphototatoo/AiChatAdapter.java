@@ -107,11 +107,11 @@ public class AiChatAdapter extends RecyclerView.Adapter<AiChatAdapter.ChatViewHo
         holder.promptTextDown.setText(message.getPrompt());
         // Configurar el listener de clic para la imagen
         // Configurar el listener de pulsación larga para la imagen
-        holder.imageUriImageView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.imageUrlImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 // Mostrar el PopupMenu al realizar una pulsación larga en la imagen
-                showPopupMenu(holder.imageUriImageView, message);
+                showPopupMenu(holder.imageUrlImageView, message);
                 return true;
             }
         });

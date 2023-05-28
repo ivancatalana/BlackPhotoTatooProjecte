@@ -118,7 +118,7 @@
         android:id="@+id/tatooStoreFragment"
         android:name="com.example.blackphototatoo.TatooStoreFragment"
         android:label="fragment_tatoo_store"
-        tools:layout="@layout/fragment_tatoo_store" />
+        tools:layout="@layout/fragment_tatoo_store_recycler" />
     <fragment
         android:id="@+id/postDiscoverFragment"
         android:name="com.example.blackphototatoo.PostDiscoverFragment"
@@ -187,6 +187,19 @@
         android:id="@+id/chatListFragment"
         android:name="com.example.blackphototatoo.ChatList"
         android:label="ChatList" />
+    <fragment
+        android:id="@+id/tabbed1AFragment"
+        android:name="com.example.blackphototatoo.Tabbed1AFragment"
+        android:label="Tabbed1AFragment" />
+    <fragment
+        android:id="@+id/tabbed1BFragment"
+        android:name="com.example.blackphototatoo.Tabbed1BFragment"
+        android:label="Tabbed1BFragment" />
+    <include app:graph="@navigation/recycler_graph" />
+    <fragment
+        android:id="@+id/tatooPrueba"
+        android:name="com.example.blackphototatoo.TatooPrueba"
+        android:label="TatooPrueba" />
 
 
 </navigation>

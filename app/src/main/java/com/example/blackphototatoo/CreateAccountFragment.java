@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -34,11 +36,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class CreateAccountFragment extends Fragment {
-    Button botonCrearCuenta;
+    private Button botonCrearCuenta;
     private EditText emailEditText, passwordEditText, retypepasswordEditText;
     private Button registerButton;
     private FirebaseAuth mAuth;
-    NavController navController;
+    private NavController navController;
+    final boolean[] isPremium = {false}; // Declarar como arreglo de un solo elemento
 
     public CreateAccountFragment() {
     }
@@ -59,6 +62,17 @@ public class CreateAccountFragment extends Fragment {
         passwordEditText = view.findViewById(R.id.password);
         retypepasswordEditText = view.findViewById(R.id.retypepassword);
         mAuth = FirebaseAuth.getInstance();
+
+        CheckBox premiumCheckBox = view.findViewById(R.id.premiumCheckBox);
+        premiumCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isPremium[0] = isChecked; // Acceder al valor a través del arreglo
+            }
+        });
+
+
+
         botonCrearCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,6 +80,8 @@ public class CreateAccountFragment extends Fragment {
             }
         });
     }
+
+
 
     private void crearCuenta() {
         if (!validarFormulario()) {
@@ -98,25 +114,25 @@ public class CreateAccountFragment extends Fragment {
                                         }
                                     });
                             final DatabaseReference databaser = FirebaseDatabase.getInstance().getReference("usuariosPrueba");
-                            Query query = databaser.orderByChild("uid").equalTo(mAuth.getCurrentUser().getUid());
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                        String child = databaser.getKey();
-                                        dataSnapshot1.getRef().child("name").setValue(mAuth.getCurrentUser().getEmail());
-                                    }
-                                }
+//                            Query query = databaser.orderByChild("uid").equalTo(mAuth.getCurrentUser().getUid());
+//                            query.addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+//                                        String child = databaser.getKey();
+//                                        dataSnapshot1.getRef().child("name").setValue(mAuth.getCurrentUser().getEmail());
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-
-                            profileRef.getDownloadUrl();
+                           // profileRef.getDownloadUrl();
                             System.out.println(mAuth.getCurrentUser().getDisplayName());
-                            Users u = new Users("https://firebasestorage.googleapis.com/v0/b/blackphototatoo.appspot.com/o/profileImages%2F838c756f-ab57-469d-beb0-93594c6557e4?alt=media&token=4e5f687a-9e5c-4f9b-88b1-76231dd36314", mAuth.getUid(), mAuth.getCurrentUser().getEmail(), mAuth.getCurrentUser().getEmail());
+                            Users u = new Users("https://firebasestorage.googleapis.com/v0/b/blackphototatoo.appspot.com/o/profileImages%2F838c756f-ab57-469d-beb0-93594c6557e4?alt=media&token=4e5f687a-9e5c-4f9b-88b1-76231dd36314", mAuth.getUid(), mAuth.getCurrentUser().getEmail(), mAuth.getCurrentUser().getEmail(),isPremium[0]);
                             FirebaseFirestore.getInstance().collection("usuariosPrueba").add(u);
                         } else {
                             Snackbar.make(requireView(), "Error: " + task.getException(), Snackbar.LENGTH_LONG).show();

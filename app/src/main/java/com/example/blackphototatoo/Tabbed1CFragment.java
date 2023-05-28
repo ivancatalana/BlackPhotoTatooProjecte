@@ -42,11 +42,12 @@ import java.util.Locale;
  */
 public class Tabbed1CFragment extends Fragment {
     private RecyclerView recyclerView;
-    private List<MyEmails> listaEmails =new ArrayList<>();
+    private List<MyEmails> listaEmails = new ArrayList<>();
     private String tuUid;
     private String nameActualized;
     private String photoActualizerd;
     private NavController navController;
+
     public Tabbed1CFragment() {
         // Required empty public constructor
     }
@@ -99,66 +100,68 @@ public class Tabbed1CFragment extends Fragment {
                     String receiverChat = chatDocument.getString("receiver");
 
                     System.out.println("Senderxat   : " + senderChat + "  Receiverxat  : " + receiverChat + "-----------------------------------------------");
+                    if (senderChat != null && receiverChat != null) {
+                        // Verificar si el UID del remitente o receptor coincide con el UID del usuario actual
+                        if (senderChat.equals(tuUid) || receiverChat.equals(tuUid)) {
+                            // Obtener la referencia de la última subcolección de mensajes
+                            CollectionReference messagesCollectionRef = chatDocument.getReference().collection("messages");
 
-                    // Verificar si el UID del remitente o receptor coincide con el UID del usuario actual
-                    if (senderChat.equals(tuUid) || receiverChat.equals(tuUid)) {
-                        // Obtener la referencia de la última subcolección de mensajes
-                        CollectionReference messagesCollectionRef = chatDocument.getReference().collection("messages");
+                            // Obtener el último documento de la subcolección de mensajes
+                            messagesCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING)
+                                    .limit(1)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            if (queryDocumentSnapshots.isEmpty()) {}
+                                            else{
 
-                        // Obtener el último documento de la subcolección de mensajes
-                        messagesCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING)
-                                .limit(1)
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            for (QueryDocumentSnapshot messageDocument : queryDocumentSnapshots) {
+                                                String sender = messageDocument.getString("sender");  //uid del usuario1
+                                                String receiver = messageDocument.getString("receiver");//uid del usuario 2
+                                                String content = messageDocument.getString("content");
+                                                Date timestamp = messageDocument.getDate("timestamp");
+                                                String userId = messageDocument.getString("sender");
+                                                System.out.println("Sender:   " + sender + "  Reveiver  :   " + receiver);
+                                                System.out.println(content);
+                                                String timestampEmail = dateFormat.format(timestamp);
 
-                                        for (QueryDocumentSnapshot messageDocument : queryDocumentSnapshots) {
-                                            String sender = messageDocument.getString("sender");  //uid del usuario1
-                                            String receiver = messageDocument.getString("receiver");//uid del usuario 2
-                                            String content = messageDocument.getString("content");
-                                            Date timestamp = messageDocument.getDate("timestamp");
-                                            String userId = messageDocument.getString("sender");
-                                            System.out.println("Sender:   " + sender + "  Reveiver  :   " + receiver);
-                                            System.out.println(content);
-                                            String timestampEmail = dateFormat.format(timestamp);
+                                                // Verificar si el UID del remitente o receptor coincide con el UID del usuario actual
+                                                fetchUserData(userId, new ChatList.FetchUserDataCallback() {
+                                                    @Override
+                                                    public void onUserDataFetched(String name, String photoUrl) {
+                                                        MyEmails email = new MyEmails(photoUrl, name, timestampEmail, content, receiver, sender);
+                                                        myObjects.add(email); // Agregar objeto a la lista
 
-                                            // Verificar si el UID del remitente o receptor coincide con el UID del usuario actual
-                                            fetchUserData(userId, new ChatList.FetchUserDataCallback() {
-                                                @Override
-                                                public void onUserDataFetched(String name, String photoUrl) {
-                                                    MyEmails email = new MyEmails(photoUrl, name, timestampEmail, content , receiver, sender);
-                                                    myObjects.add(email); // Agregar objeto a la lista
-                                                    navController = Navigation.findNavController(view);
-
-                                                    MyAdapterEmails adapter = new MyAdapterEmails(myObjects);
-                                                    adapter.setOnItemClickListener(new MyAdapterEmails.OnItemClickListener() {
-                                                        @Override
-                                                        public void onItemClick(MyEmails email) {
-                                                            handleEmailClick(view, email);
-                                                        }
-                                                    });
-                                                    recyclerView.setAdapter(adapter);
-                                                    System.out.println("Tamaño del array: " + myObjects.size());
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
+                                                        MyAdapterEmails adapter = new MyAdapterEmails(myObjects);
+                                                        adapter.setOnItemClickListener(new MyAdapterEmails.OnItemClickListener() {
+                                                            @Override
+                                                            public void onItemClick(MyEmails email) {
+                                                                handleEmailClick(view, email);
+                                                            }
+                                                        });
+                                                        recyclerView.setAdapter(adapter);
+                                                        System.out.println("Tamaño del array: " + myObjects.size());
+                                                    }
+                                                });
+                                            }
+                                        }}
+                                    });
+                        }
                     }
                 }
             }
         });
     }
 
-    private void handleEmailClick(View view,MyEmails email) {
+    private void handleEmailClick(View view, MyEmails email) {
         String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String senderUid = email.getSender();
         String receiverUid = email.getReceiver();
 
-        System.out.println(senderUid+"--------------SenderUID---------------------------------------------  "+ senderUid);
-        System.out.println(tuUid+"-------------------mi UID----------------------------------------  "+ tuUid);
-        System.out.println(receiverUid+"------------------------------------Receiver-----------------------  "+ receiverUid);
+        System.out.println(senderUid + "--------------SenderUID---------------------------------------------  " + senderUid);
+        System.out.println(tuUid + "-------------------mi UID----------------------------------------  " + tuUid);
+        System.out.println(receiverUid + "------------------------------------Receiver-----------------------  " + receiverUid);
 
         String photoUrl = email.getImageResource();
         String name = email.getName();

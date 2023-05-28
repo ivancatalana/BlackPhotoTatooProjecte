@@ -3,7 +3,6 @@ package com.example.blackphototatoo;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +34,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -186,7 +183,7 @@ public class EmailActivity extends AppCompatActivity {
                 super(itemView);
                 contentTextView = itemView.findViewById(R.id.contentTextView);
                 timestampTextView = itemView.findViewById(R.id.timestampTextView);
-                profileImageView = itemView.findViewById(R.id.profileImageView);
+                profileImageView = itemView.findViewById(R.id.tatooImageView);
             }
 
             public void bind(ChatMessage message) {

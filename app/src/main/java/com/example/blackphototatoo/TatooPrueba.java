@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TatooStoreFragment extends Fragment {
+public class TatooPrueba extends Fragment {
     private RecyclerView recyclerView;
     public AppViewModel appViewModel;
     RecyclerView postsRecyclerView;
@@ -59,7 +59,7 @@ public class TatooStoreFragment extends Fragment {
     private String photoUrl;
     private String name;
 
-    public TatooStoreFragment() {
+    public TatooPrueba() {
         // Required empty public constructor
     }
 
@@ -73,7 +73,7 @@ public class TatooStoreFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_tatoo_store_recycler, container, false);
+        View view = inflater.inflate(R.layout.fragment_tatoo_prueba, container, false);
         //////    //Codigo para que no se bloquee el recyclerview al cerrar app o bloquear pantalla
         // Find the RecyclerView in the layout
 //        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewchatList);
@@ -88,8 +88,9 @@ public class TatooStoreFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        postsRecyclerView = view.findViewById(R.id.recyclerViewTatooList);
+        postsRecyclerView = view.findViewById(R.id.recyclerTiendas);
         postsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext())); // Adjuntar un LinearLayoutManager al RecyclerView
+
         uidPostProfile = FirebaseAuth.getInstance().getUid();
 
 //        Query query = FirebaseFirestore.getInstance().collection("usuariosPrueba").whereEqualTo("premium", true);
@@ -148,11 +149,11 @@ public class TatooStoreFragment extends Fragment {
                         String photoUrl = documentSnapshot.getString("uidPhotoUrl");
                         String email = documentSnapshot.getString("mail");
                         String uid = documentSnapshot.getString("uid");
-                        String location = documentSnapshot.getString("location");
-
-                        // Crear un objeto PremiumUser y agregarlo a la lista
-                        PremiumUser premiumUser = new PremiumUser(name, photoUrl, email, uid , location );
-                        premiumUsers.add(premiumUser);
+//
+//                        // Crear un objeto PremiumUser y agregarlo a la lista
+//                        PremiumUser premiumUser = new PremiumUser(name, photoUrl, email ,uid);
+//                        premiumUsers.add(premiumUser);
+//
 
                     }
                     // Crear el adapter y asignarlo al RecyclerView

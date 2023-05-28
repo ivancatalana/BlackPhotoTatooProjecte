@@ -15,7 +15,7 @@
             android:layout_height="245dp"
             android:background="@drawable/white_background_with_texture"
             android:scaleType="centerCrop"
-            android:src="@drawable/iconphotpedit"
+            android:src="@drawable/touch"
             app:layout_constraintBottom_toTopOf="@+id/gridLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
@@ -42,18 +42,18 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="#19BFA2A2"
-                android:text="Ai messages"
+                android:text="Ai History"
                 tools:background="#95FFFFFF" />
 
             <Button
-                android:id="@+id/effectButton"
+                android:id="@+id/editPhotoButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="5dp"
                 android:background="@drawable/round_button"
-                android:text="Effects"
+                android:text="Edit Photo"
                 tools:background="#95FFFFFF" />
 
             <Button
@@ -65,7 +65,7 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/round_button"
                 android:backgroundTint="#19BFA2A2"
-                android:text="AI chat"
+                android:text="AI Editor"
                 tools:background="#95FFFFFF" />
 
             <Button
@@ -83,21 +83,12 @@
         </GridLayout>
 
         <Button
-            android:id="@+id/editSelectedButton"
-            android:layout_width="77dp"
-            android:layout_height="50dp"
-            android:text="Edit selected image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
             android:id="@+id/nuevaPublicacionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
             android:text="pub"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editSelectedButton" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/discoverButton"
@@ -122,6 +113,24 @@
             android:text="chatList"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/discoverButton" />
+
+        <TextView
+            android:id="@+id/selectPhotoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/robotoblack"
+            android:text="Tap ↑ to select image "
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selected_photo_thumbnail" />
+
+        <Button
+            android:id="@+id/tatoo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nuevaPublicacionButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -36,6 +36,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -67,7 +68,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -106,6 +110,8 @@ public class AIEditorFragment extends Fragment {
     private Handler handler = new Handler();
     private boolean serverResponseReceived = false;
     private int progressCounter = 0;
+    private boolean isPopupOpen = false;
+
 
     @SuppressLint("MissingInflatedId")
     @Nullable
@@ -616,13 +622,8 @@ public class AIEditorFragment extends Fragment {
 
         // Aquí guardas la imagen en la galería usando el bitmap obtenido
         // Puedes utilizar el MediaStore para guardar la imagen
-        String imageFileName;
-        String randomFileName = UUID.randomUUID().toString();
-        imageFileName = randomFileName + ".jpg";
-
 
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
         values.put(MediaStore.Images.Media.WIDTH, bitmap.getWidth());
         values.put(MediaStore.Images.Media.HEIGHT, bitmap.getHeight());
@@ -630,38 +631,33 @@ public class AIEditorFragment extends Fragment {
         ContentResolver resolver = requireActivity().getContentResolver();
         Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         imageUriGuardada = imageUri;
+
+        // Guardar los metadatos de la imagen, incluyendo la fecha actual
+        try {
+            ExifInterface exifInterface = new ExifInterface(resolver.openFileDescriptor(imageUri, "rw").getFileDescriptor());
+            exifInterface.setAttribute(ExifInterface.TAG_DATETIME, getCurrentDateTime());
+            exifInterface.saveAttributes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         OutputStream outputStream;
         try {
             outputStream = resolver.openOutputStream(imageUri);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.close();
 
-            // Guardar la ruta del archivo guardado en la variable rutaImagenGuardada
-            rutaImagenGuardada = getImagePathFromUri(imageUriGuardada);
+            // Resto del código para mostrar o cargar la imagen
 
             Toast.makeText(requireContext(), "Imagen guardada en la galería", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!generarNombreAleatorio) {
+    }
 
-            // Obtener la ruta del archivo de la URI
-            String filePath = getImagePathFromUri(imageUriGuardada);
-
-//            // Cargar la imagen como miniatura respetando su aspecto original
-//            int targetWidth = imageView.getWidth();
-//            int targetHeight = imageView.getHeight();
-//            Bitmap bitmap2 = decodeSampledBitmapFromFile(filePath, targetWidth, targetHeight);
-//
-//            // Mostrar la imagen corregida en el ImageView
-//            imageView.setImageBitmap(bitmap2);
-//            imageView.setTag(bitmap2.toString());
-//            uploadButton.setEnabled(true);
-            Glide.with(requireContext())
-                    .load(imageUrl)
-                    .into(imageView);
-
-        }
+    private String getCurrentDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault());
+        return dateFormat.format(new Date());
     }
 
 
@@ -710,52 +706,71 @@ public class AIEditorFragment extends Fragment {
     }
 
     public void showPopupBlackWhite(Uri uri) {
-        // Inflar el diseño del popup
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        View popupView = inflater.inflate(R.layout.popup_layout, null);
+        if (isPopupOpen) {
+            // Ya hay un popup abierto, no se puede abrir otro
+            Toast.makeText(requireContext(), "Popup already open", Toast.LENGTH_SHORT).show();
 
-        // Crear el popup
-        PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        } else {
+            LayoutInflater inflater = LayoutInflater.from(requireContext());
+            View popupView = inflater.inflate(R.layout.popup_layout, null);
+            LinearLayout popupLayout = popupView.findViewById(R.id.popupLayout);
 
-        // Obtener las referencias a las SeekBar del popup
-        SeekBar seekBar1 = popupView.findViewById(R.id.seekBar1);
-        SeekBar seekBar2 = popupView.findViewById(R.id.seekBar2);
-
-        // Establecer el rango de valores de las SeekBar
-        seekBar1.setMax(255);
-        seekBar2.setMax(255);
-
-        // Obtener las referencias a los botones del popup
-        Button acceptButton = popupView.findViewById(R.id.acceptButton);
-        Button cancelButton = popupView.findViewById(R.id.cancelButton);
-
-        // Agregar funcionalidad a los botones
-        acceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Acción al aceptar el popup
-                // Obtener los valores seleccionados de las SeekBar
-                int value1 = seekBar1.getProgress();
-                int value2 = seekBar2.getProgress();
-                // Realizar la acción deseada con los valores seleccionados
-                uploadFile(uri, "opencv " + value1 + " " + value2);
-
-                // Cerrar el popup
-                popupWindow.dismiss();
+            PopupWindow popupWindow = new PopupWindow(popupLayout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            // Establecer el fondo del popup como un drawable con borde negro
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                popupLayout.setBackground(getResources().getDrawable(R.drawable.popup_background, null));
+            } else {
+                popupLayout.setBackground(getResources().getDrawable(R.drawable.popup_background));
             }
-        });
+            // Obtener las referencias a las SeekBar del popup
+            SeekBar seekBar1 = popupView.findViewById(R.id.seekBar1);
+            SeekBar seekBar2 = popupView.findViewById(R.id.seekBar2);
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Acción al cancelar el popup
-                // Cerrar el popup
-                popupWindow.dismiss();
-            }
-        });
+            // Establecer el rango de valores de las SeekBar
+            seekBar1.setMax(255);
+            seekBar2.setMax(255);
 
-        // Mostrar el popup en la posición deseada
-        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+            // Obtener las referencias a los botones del popup
+            Button acceptButton = popupView.findViewById(R.id.acceptButton);
+            Button cancelButton = popupView.findViewById(R.id.cancelButton);
+
+            // Agregar funcionalidad a los botones
+            acceptButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Acción al aceptar el popup
+                    // Obtener los valores seleccionados de las SeekBar
+                    int value1 = seekBar1.getProgress();
+                    int value2 = seekBar2.getProgress();
+                    // Realizar la acción deseada con los valores seleccionados
+                    uploadFile(uri, "opencv " + value1 + " " + value2);
+
+                    // Cerrar el popup
+                    popupWindow.dismiss();
+                }
+            });
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Acción al cancelar el popup
+                    // Cerrar el popup
+                    popupWindow.dismiss();
+                }
+            });
+
+            // Mostrar el popup en la posición deseada
+            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+            // Actualizar el estado de la variable
+            isPopupOpen = true;
+        }
+    }
+
+    public void dismissPopup() {
+        // Cerrar el popup
+
+        // Actualizar el estado de la variable
+        isPopupOpen = false;
     }
 
 }
