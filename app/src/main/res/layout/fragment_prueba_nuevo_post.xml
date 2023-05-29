@@ -32,14 +32,14 @@
             <Button
                 android:id="@+id/camara_fotos"
                 android:layout_width="55dp"
-                android:layout_height="wrap_content"
+                android:layout_height="55dp"
                 android:layout_marginLeft="8dp"
                 android:background="@drawable/camera" />
 
             <ImageView
                 android:id="@+id/postsProfileImageView"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:src="@drawable/iconphotpedit" />
