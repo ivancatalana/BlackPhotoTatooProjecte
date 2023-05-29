@@ -12,11 +12,6 @@ import androidx.navigation.NavController;
 
 import com.bumptech.glide.Glide;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PostViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PostViewFragment extends Fragment {
     ImageView postPhotoImageView, mediaImageView;
     TextView displayNameTextView, contentTextView, dateTimeText;

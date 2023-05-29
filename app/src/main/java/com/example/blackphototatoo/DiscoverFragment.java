@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -87,6 +88,17 @@ public class DiscoverFragment extends Fragment {
 
         navController = Navigation.findNavController(view);
 
+        Button searchButton = view.findViewById(R.id.searchButtonDiscover);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                navController.navigate(R.id.searchFirebaseFragment);
+
+            }
+        });
+
+
         // Restaurar el estado del RecyclerView
         if (savedInstanceState != null) {
             recyclerViewState = savedInstanceState.getParcelable("recycler_state");
@@ -108,9 +120,7 @@ public class DiscoverFragment extends Fragment {
                 .build();
 
         postsRecyclerView.setAdapter(new PostsAdapter(options));
-
-        appViewModel = new
-                ViewModelProvider(requireActivity()).get(AppViewModel.class);
+        appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
 
 
     }
@@ -145,9 +155,9 @@ public class DiscoverFragment extends Fragment {
                     .document(postKey)
                     .update("likes."+uid, post.likes.containsKey(uid) ? FieldValue.delete() : true);
             });
+
             holder.authorPhotoImageView.setOnClickListener(view -> {
                 appViewModel.postSeleccionado.setValue(post);
-
                 Bundle bundle = new Bundle();
                 bundle.putString("nombre", post.author);
                 bundle.putString("uid", post.uid);

@@ -1,6 +1,7 @@
 package com.example.blackphototatoo;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,18 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MediaFragment extends Fragment {
     VideoView videoView;
@@ -32,7 +37,7 @@ public class MediaFragment extends Fragment {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) { // Inflate the layout for this fragment
+                             Bundle savedInstanceState) { // Inflate the layout for this fragmet
         return inflater.inflate(R.layout.fragment_media, container, false);
     }
     @Override
@@ -40,6 +45,17 @@ public class MediaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
         navController = Navigation.findNavController(view);
+        // accion personalizada al volver atras
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                //  Handle the back button even
+                // Aqui podemos configurar el comprotamiento del boton back
+                navController.navigate(R.id.discoverFragment);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+//
         imageView = view.findViewById(R.id.imageView);
         authorImage = view.findViewById(R.id.photoImageViewPost);
         autor = view.findViewById(R.id.authorTextName);
@@ -64,16 +80,20 @@ public class MediaFragment extends Fragment {
                 Glide.with(requireView()).load(post.authorPhotoUrl).circleCrop().into(authorImage);
             }
         });
-      authorImage.setOnClickListener(new View.OnClickListener() {
+        ConstraintLayout profileClick= view.findViewById(R.id.mediaProfileConstraint);
+      profileClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Bundle bundle = new Bundle();
                 bundle.putString("uid",uidPost);
+                if (FirebaseAuth.getInstance().getUid().equals(uidPost)){
+                    BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_nav_view);
+                    bottomNavigationView.setSelectedItemId(R.id.bottom1Fragment);
+                }
+                else{
+                    navController.navigate(R.id.profileFriendsFragment,bundle);
+                }
 
-                navController.navigate(R.id.profileFriendsFragment,bundle);
-                // Acción a realizar cuando se hace clic en el ImageView
-                // Por ejemplo, mostrar un mensaje o navegar a otra pantalla
             }
         });
     }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -35,7 +36,7 @@ public class UploadPhotoFragment extends Fragment {
     private Uri selectedImageUri;
     private NavController navController;
     private View view;
-    private Button effectsButton;
+    private RelativeLayout effectsButton;
     private String mediaTipo;
     private ImageView selectedPhotoThumbnail;
     @Override
@@ -59,14 +60,20 @@ public class UploadPhotoFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_upload_photo, container, false);
         effectsButton = view.findViewById(R.id.editPhotoButton);
         selectedPhotoThumbnail = view.findViewById(R.id.selected_photo_thumbnail);
-        Button selectPhotoButton = view.findViewById(R.id.select_photo_button);
+        RelativeLayout selectPhotoButton = view.findViewById(R.id.select_photo_button);
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
+                navController.navigate(R.id.nuevaPublicacionFragment);
             }
-        });
+       });
+//        selectPhotoButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(intent, REQUEST_CODE_SELECT_PHOTO);
+//            }
+//        });
         selectedPhotoThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +101,7 @@ public class UploadPhotoFragment extends Fragment {
 
             }
         });
-       Button chatIA = view.findViewById(R.id.chatButton);
+       RelativeLayout chatIA = view.findViewById(R.id.chatButton);
         chatIA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +125,7 @@ public class UploadPhotoFragment extends Fragment {
 
             }
         });
-      Button chatIAMessages = view.findViewById(R.id.buttonAiMessages);
+      RelativeLayout chatIAMessages = view.findViewById(R.id.buttonAiMessages);
         chatIAMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

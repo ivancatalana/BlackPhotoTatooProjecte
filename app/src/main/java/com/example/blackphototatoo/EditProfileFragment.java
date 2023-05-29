@@ -3,6 +3,7 @@ package com.example.blackphototatoo;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
+import org.osmdroid.util.GeoPoint;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Context;
@@ -30,6 +32,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -65,7 +71,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 public class EditProfileFragment extends Fragment {
@@ -76,6 +91,7 @@ public class EditProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private Button editName;
     private Button signOut;
+    private Button changeLocation;
     private Uri selectedImageUri;
     private View view;
     private PhotoView profileImageView;
@@ -96,6 +112,7 @@ public class EditProfileFragment extends Fragment {
         view=viewn;
         mAuth=FirebaseAuth.getInstance();
         editName= view.findViewById(R.id.button9);
+        changeLocation= view.findViewById(R.id.editLocationButton);
         signOut= view.findViewById(R.id.buttonSignOut);
         profileImageView = view.findViewById(R.id.friendProfileImageView);
         navController = Navigation.findNavController(view);
@@ -131,6 +148,27 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 System.out.println(  mAuth.getCurrentUser().getDisplayName()+"----------____________________________________________");
                 showPopupName();
+            }
+        });
+        changeLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMapDialog(new OnLocationSelectedListener() {
+                    @Override
+                    public void onLocationSelected(String location) {
+                        // Obtener el UID del usuario actual
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            String uid = currentUser.getUid();
+
+                            // Llamar a la función para agregar los datos en Firestore
+                            addLocationToFirestore(uid, location);
+                        }
+                    }
+                });
+
+
+
             }
         });
         view.findViewById(R.id.button20).setOnClickListener(new View.OnClickListener() {
@@ -411,4 +449,82 @@ public class EditProfileFragment extends Fragment {
             }
         });
     }
+    private void addLocationToFirestore(String uid, String location) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference collectionRef = firestore.collection("usuariosPrueba");
+
+        // Crear un objeto con los datos a agregar
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("uid", uid);
+        userData.put("location", location);
+
+        collectionRef.document(uid)
+                .set(userData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Éxito al agregar los datos en Firestore
+                        Toast.makeText(getContext(), "Datos agregados correctamente", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Error al agregar los datos en Firestore
+                        Toast.makeText(getContext(), "Error al agregar los datos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void showMapDialog(final OnLocationSelectedListener locationListener) {
+        Context context = requireContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.popup_set_location, null);
+        builder.setView(dialogView);
+
+        MapView mapView = dialogView.findViewById(R.id.mapView);
+        ImageView backgroundImageView = dialogView.findViewById(R.id.backgroundImageView);
+        final AlertDialog dialog = builder.create();
+
+        mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+        mapView.setMultiTouchControls(true);
+
+        // Configurar el botón de aceptar
+        RelativeLayout acceptButton = dialogView.findViewById(R.id.acceptButtonLocation);
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtener la posición actual del marcador
+                GeoPoint markerPosition = (GeoPoint) mapView.getMapCenter();
+                double markerLatitude = markerPosition.getLatitude();
+                double markerLongitude = markerPosition.getLongitude();
+
+                // Construir la ubicación en formato "latitud-longitud"
+                String location = markerLatitude + "-" + markerLongitude;
+
+                // Llamar al listener con la ubicación seleccionada
+                locationListener.onLocationSelected(location);
+
+                // Cerrar el diálogo
+                dialog.dismiss();
+            }
+        });
+
+        ImageButton closeButton = dialogView.findViewById(R.id.closeButton);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cerrar el diálogo sin seleccionar ninguna ubicación
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private interface OnLocationSelectedListener {
+        void onLocationSelected(String location);
+    }
+
+
 }

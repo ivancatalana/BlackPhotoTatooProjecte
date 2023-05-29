@@ -12,6 +12,79 @@ public class Post {
     // public String date
     public String authorPhotoUrl;
     public String content;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getDateTimePost() {
+        return dateTimePost;
+    }
+
+    public void setDateTimePost(String dateTimePost) {
+        this.dateTimePost = dateTimePost;
+    }
+
+    public String getOrdenadaDateTime() {
+        return ordenadaDateTime;
+    }
+
+    public void setOrdenadaDateTime(String ordenadaDateTime) {
+        this.ordenadaDateTime = ordenadaDateTime;
+    }
+
+    public String getAuthorPhotoUrl() {
+        return authorPhotoUrl;
+    }
+
+    public void setAuthorPhotoUrl(String authorPhotoUrl) {
+        this.authorPhotoUrl = authorPhotoUrl;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public Map<String, Boolean> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Map<String, Boolean> likes) {
+        this.likes = likes;
+    }
+
     public String mediaUrl;
     public String mediaType;
     public Map<String, Boolean> likes = new HashMap<>();

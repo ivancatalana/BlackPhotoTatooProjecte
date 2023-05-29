@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/option1"
+        android:title="Editor" />
+    <item
+        android:id="@+id/option2"
+        android:title="Delete" />
+    <item
+        android:id="@+id/option3"
+        android:title="Back" />
+</menu>

@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment {
 
                 bundle.putString("nombre", post.author);
                 bundle.putString("email", post.uid);
-                bundle.putInt("foto", R.drawable.profile);
+                bundle.putInt("foto", R.drawable.profile__);
 
 /*
                 if (post.uid.equals(uid)){

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,7 +38,6 @@ public class ProfileFragment extends Fragment {
     public ProfileFragment() {
         // Required empty public constructor
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,16 +57,13 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentProfileBinding.inflate(inflater, container, false);
-
         viewPager = binding.viewPager;
         tabLayout = binding.tabLayout;
         editProfile=binding.button5;
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#D4AF37"));
-
         // Cambiar tamaño de letra de las Tabs
         return binding.getRoot();
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -76,7 +71,7 @@ public class ProfileFragment extends Fragment {
         navController = Navigation.findNavController(view);
 
         Glide.with(this)
-                .load(getResources().getDrawable(R.drawable.profile))
+                .load(getResources().getDrawable(R.drawable.profile__))
                 .circleCrop()
                 .placeholder(R.drawable.borde)
                 .into(profile);
@@ -237,7 +232,7 @@ public class ProfileFragment extends Fragment {
                     } else {
 
                         Glide.with(getContext())
-                                .load(R.drawable.profile_)
+                                .load(R.drawable.profile)
                                 .circleCrop()
                                 .into(photo);
 

@@ -1,0 +1,96 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/custom_popup_background">
+    >
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/confirmDeleteConstraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/confirmDelete"
+            style="@style/PopupMenuStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/reemkufi"
+            android:text="CONFIRM"
+            android:textColor="#B7FFC107"
+            app:layout_constraintBottom_toTopOf="@+id/cancelDelete"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/cancelDelete"
+            style="@style/PopupMenuStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/reemkufi"
+            android:text="CANCEL"
+            android:textColor="#B7FFC107"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rocksalt"
+            android:text="ARE YOU SURE ? "
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/confirmDelete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/menuEditLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="visible">
+        <!-- Opción 1 -->
+
+        <!-- Opción 2 -->
+        <Button
+            android:id="@+id/option1Button"
+            style="@style/PopupMenuStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/reemkufi"
+            android:text="EDIT"
+            android:textColor="#B7FFC107" />
+
+        <Button
+            android:id="@+id/option2Button"
+            style="@style/PopupMenuStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/reemkufi"
+            android:text="DELETE"
+            android:textColor="#B7FFC107" />
+
+        <!-- Opción 3 -->
+        <Button
+            android:id="@+id/option3Button"
+            style="@style/PopupMenuStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/reemkufi"
+            android:text="BACK"
+            android:textColor="#B7FFC107" />
+
+
+    </LinearLayout>
+
+</FrameLayout>

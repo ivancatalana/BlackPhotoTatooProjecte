@@ -205,6 +205,16 @@
         android:name="com.example.blackphototatoo.SearchFirebaseFragment"
         android:label="fragment_search_firebase"
         tools:layout="@layout/fragment_search_firebase" />
+    <fragment
+        android:id="@+id/searchFragmentFirebase"
+        android:name="com.example.blackphototatoo.SearchFirebaseFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search_firebase" />
 
+
+
+    <action
+        android:id="@+id/action_searchFragment_to_mediaFragment"
+        app:destination="@id/mediaFragment" />
 
 </navigation>

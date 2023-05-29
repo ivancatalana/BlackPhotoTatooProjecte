@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -514,30 +515,36 @@ public class AIEditorFragment extends Fragment {
                 int progress = calculateProgress(); // Calcula el progreso actual (10%, 20%, etc.)
                 String progressTextS = progress + "%";
                 if (isAdded() && isVisible()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressText.setText(progressTextS); // Actualiza el texto con el progreso actual
-                    }
-                });
-
-                if (!serverResponseReceived) {
-                    // Si aún no se ha recibido la respuesta del servidor, programa la próxima actualización
-                    handler.postDelayed(this, 10000); // 10 segundos
-                } else {
-                    // Restablece el texto a vacío después de recibir la respuesta del servidor
-
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressText.setText("");
+                            progressText.setText(progressTextS); // Actualiza el texto con el progreso actual
+
+                            if (progress >= 100) {
+                                progressText.setTextColor(Color.RED); // Cambia el color del texto a rojo
+                            } else {
+                                progressText.setTextColor(Color.BLACK); // Restaura el color del texto a negro
+                            }
                         }
                     });
-                    // Restablece el booleano a false y el contador de progreso a cero
-                    serverResponseReceived = false;
-                    progressCounter = 0;
+
+                    if (!serverResponseReceived) {
+                        // Si aún no se ha recibido la respuesta del servidor, programa la próxima actualización
+                        handler.postDelayed(this, 10000); // 10 segundos
+                    } else {
+                        // Restablece el texto a vacío después de recibir la respuesta del servidor
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressText.setText("");
+                            }
+                        });
+                        // Restablece el booleano a false y el contador de progreso a cero
+                        serverResponseReceived = false;
+                        progressCounter = 0;
+                    }
                 }
-            }}
+            }
         };
         handler.postDelayed(runnable, 10000); // Inicia la actualización después de 10 segundos
     }
