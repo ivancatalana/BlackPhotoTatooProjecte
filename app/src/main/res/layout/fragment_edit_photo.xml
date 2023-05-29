@@ -25,8 +25,8 @@
 
     <ImageView
         android:id="@+id/guardarButton"
-        android:layout_width="113dp"
-        android:layout_height="133dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="-0dp"
         android:layout_marginTop="-0dp"
         android:background="#00000000"
@@ -39,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Menú"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guardarButton"
         app:layout_constraintTop_toTopOf="parent" />
@@ -126,7 +127,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:background="@drawable/button_dashboard"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -160,9 +161,33 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rock_salt"
             android:text=" select an adjust"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toTopOf="@id/adjustSeekBar"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/rocksalt"
+        android:gravity="end"
+        android:text="Menu"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@+id/relativeButtonMenuDrawer"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:fontFamily="@font/rocksalt"
+        android:text="Save"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/guardarButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

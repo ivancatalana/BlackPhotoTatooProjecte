@@ -514,6 +514,8 @@ public class AIEditorFragment extends Fragment {
             public void run() {
                 int progress = calculateProgress(); // Calcula el progreso actual (10%, 20%, etc.)
                 String progressTextS = progress + "%";
+                progressText.setTextColor(Color.BLACK); // Restaura el color del texto a negro
+
                 if (isAdded() && isVisible()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -537,6 +539,7 @@ public class AIEditorFragment extends Fragment {
                             @Override
                             public void run() {
                                 progressText.setText("");
+                                progressText.setTextColor(Color.BLACK); // Restaura el color del texto a negroiu
                             }
                         });
                         // Restablece el booleano a false y el contador de progreso a cero
