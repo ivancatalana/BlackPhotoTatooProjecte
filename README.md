@@ -108,6 +108,23 @@ Estem oberts a contribucions i suggeriments! Si tens idees per millorar Black Ph
 
 
 ## Screenshots
-![Screenshot 1](screenshot1.png)
-![Screenshot 2](screenshot2.png)
-![Screenshot 3](screenshot3.png)
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/snapshot3.jpg">
+    </td>
+    <td align="center">
+      <img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/snapshot11.jpg">
+    </td>
+    <td align="center">
+<img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/screenshot5.jpg">
+    </td>
+    <td align="center">
+<img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/snapshot9.jpg">
+    </td>
+    <td align="center">
+      <img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/snapshot2.jpg">
+    </td>
+  </tr>
+</table>
