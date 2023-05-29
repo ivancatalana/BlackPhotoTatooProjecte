@@ -1,8 +1,14 @@
 package com.example.blackphototatoo;
 
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,16 +17,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,7 +50,8 @@ public class NuevaPublicacionFragment extends Fragment{
     NavController navController;   // <-----------------
 
     public AppViewModel appViewModel;
-
+    private static final int REQUEST_IMAGE_PICK = 1;
+    private static final int REQUEST_STORAGE_PERMISSION = 2;
     Button publishButton;
     EditText postConentEditText;
     String mediaTipo;
@@ -83,11 +92,22 @@ public class NuevaPublicacionFragment extends Fragment{
                     publicar();
                 }
             });
-
-
+            ImageView postIconImageView = view.findViewById(R.id.postsProfileImageView);
+            postIconImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+                    } else {
+                        pickImageFromGallery();
+                    }
+                }
+            });
             //Añadimos La referencia del appviewModel que declaramos arriba Y losListeners para los botones de subir multimedia
 
             appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
+
+            view.findViewById(R.id.camara_fotos).setOnClickListener(v -> tomarFoto());
 
             view.findViewById(R.id.imagen_galeria).setOnClickListener(v -> seleccionarImagen());
             appViewModel.mediaSeleccionado.observe(getViewLifecycleOwner(), media -> {
@@ -96,6 +116,7 @@ public class NuevaPublicacionFragment extends Fragment{
                 Glide.with(this).load(media.uri).into((ImageView) view.findViewById(R.id.previsualizacion));
             });
             appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
+
 
         }
           //PARTE de Storage añadida
@@ -176,12 +197,36 @@ public class NuevaPublicacionFragment extends Fragment{
     }
         private final ActivityResultLauncher<String> galeria = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             appViewModel.setMediaSeleccionado(uri, mediaTipo); });
-
+    private final ActivityResultLauncher<Uri> camaraFotos = registerForActivityResult(new ActivityResultContracts.TakePicture(), isSuccess -> {
+        appViewModel.setMediaSeleccionado(mediaUri, "image");
+    });
         private void seleccionarImagen() {
             mediaTipo = "image";
             galeria.launch("image/*");
-        }
 
-
+        }  private void tomarFoto() { try {
+        mediaUri = FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID + ".fileprovider", File.createTempFile("img", ".jpg", requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)));
+        camaraFotos.launch(mediaUri); } catch (IOException e) {}
     }
+
+    private void pickImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_PICK && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri uri = data.getData();
+                appViewModel.setMediaSeleccionado(uri, "image");
+
+            }
+        }
+    }
+
+}
+
 

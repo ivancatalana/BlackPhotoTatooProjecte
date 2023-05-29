@@ -108,6 +108,7 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_photo, container, false);
+
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         drawerLayout = getActivity().findViewById(R.id.drawer_layout);
         NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
@@ -444,8 +445,9 @@ public class EditPhotoFragment extends Fragment implements NavigationView.OnNavi
                 public void run() {
                     float thresHoldValue = mapSeekBarValueToThreshold(progress);
                     gpuImage.setFilter(new GPUImageLuminanceThresholdFilter(thresHoldValue));
-                    photoImageView.setImageBitmap(gpuImage.getBitmapWithFilterApplied());
                     fotoFinal = gpuImage.getBitmapWithFilterApplied();
+                    photoImageView.setImageBitmap(fotoFinal);
+
 
 
                 }
