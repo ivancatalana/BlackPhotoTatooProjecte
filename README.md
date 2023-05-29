@@ -74,7 +74,7 @@ Feel free to reach out to us with any suggestions or contributions to further im
 
 ## Download APK
 
-👇 ⬇️ [DownloadAPK](https://drive.google.com/file/d/1r2CR2yLEMy9LUZSJ9Ipqn9Ue8buRSlP7/view?usp=sharing)
+👇 ⬇️ [DownloadAPK](https://drive.google.com/file/d/1Srp8RC7KdoEKBwKomVfr1ZOlS5m_4c80/view?usp=share_link)
 
 <em>Black Photo Tattoo</em>
 
@@ -118,7 +118,7 @@ Estem oberts a contribucions i suggeriments! Si tens idees per millorar Black Ph
 
 ## Download APK
 
-👇 ⬇️ [DownloadAPK](https://drive.google.com/file/d/1r2CR2yLEMy9LUZSJ9Ipqn9Ue8buRSlP7/view?usp=sharing)
+👇 ⬇️ [DownloadAPK](https://drive.google.com/file/d/1Srp8RC7KdoEKBwKomVfr1ZOlS5m_4c80/view?usp=share_link)
 
 
 
