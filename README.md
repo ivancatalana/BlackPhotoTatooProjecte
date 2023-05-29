@@ -31,6 +31,11 @@
   <img src="https://raw.githubusercontent.com/ivancatalana/BlackPhotoTatooProjecte/master/app/src/main/res/drawable/logo.gif" alt="Black Photo Tattoo Logo" width="200">
 </p>
 
+
+
+
+
+
 Black Photo Tattoo is a state-of-the-art mobile application that caters to tattoo enthusiasts and photography aficionados. The app leverages cutting-edge technologies to deliver a seamless and immersive experience. Let's delve into the key features and the technologies utilized:
 ## Key Features
 
@@ -66,6 +71,11 @@ Language Support: The app provides multilingual support, with English as the pri
 ## Contribution
 At Black Photo Tattoo, we are committed to continuously enhancing the app's functionality, leveraging the latest advancements in technology and user feedback to deliver an unparalleled tattoo and photography experience.
 Feel free to reach out to us with any suggestions or contributions to further improve the app's features and user experience.
+
+## Download APK
+
+👇 ⬇️ [DownloadAPK](https://drive.google.com/file/d/1r2CR2yLEMy9LUZSJ9Ipqn9Ue8buRSlP7/view?usp=sharing)
+
 <em>Black Photo Tattoo</em>
 
 <p align="right">
@@ -106,6 +116,11 @@ Black Photo Tattoo és una aplicació mòbil dissenyada per als amants dels tatu
 Estem oberts a contribucions i suggeriments! Si tens idees per millorar Black Photo Tattoo, no dubtis a enviar pull requests o obrir issues en aquest repositori.
 
 
+## Download APK
+
+👇 ⬇️ [DownloadAPK](https://drive.google.com/file/d/1r2CR2yLEMy9LUZSJ9Ipqn9Ue8buRSlP7/view?usp=sharing)
+
+
 
 ## Screenshots
 
@@ -125,6 +140,25 @@ Estem oberts a contribucions i suggeriments! Si tens idees per millorar Black Ph
     </td>
     <td align="center">
       <img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/snapshot2.jpg">
+    </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable-v24/screenshot11.jpg">
+    </td>
+    <td align="center">
+      <img src="">
+    </td>
+    <td align="center">
+<img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable-v24/snapshot7.jpg">
+    </td>
+    <td align="center">
+<img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable-v24/snapshot8.jpg">
+    </td>
+    <td align="center">
+      <img src="https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/screenshot12.jpg"width="500">
     </td>
   </tr>
 </table>
