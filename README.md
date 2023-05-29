@@ -10,7 +10,7 @@
 
 <em>Black Photo Tattoo</em>
 
-![Black Photo Tattoo Logo]((https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/logo.gif))
+![Black Photo Tattoo Logo](https://github.com/ivancatalana/BlackPhotoTatooProjecte/blob/master/app/src/main/res/drawable/logo.gif)
 
 Black Photo Tattoo is a mobile application designed for tattoo and photography enthusiasts. This app combines the creativity of tattoos with the beauty of black and white photography.
 
